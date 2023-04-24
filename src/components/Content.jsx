@@ -11,6 +11,8 @@ function Content() {
   return (
    <ContentContainer>
     <ContentCard />
+    <ContentCard />
+    <ContentCard />
    </ContentContainer>
   )
 }

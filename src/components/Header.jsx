@@ -6,6 +6,8 @@ import LogoutIcon from '../icons/LogoutIcon';
 import HomeIcon from '../icons/HomeIcon';
 
 const HeaderContainer = styled.div`
+  position: sticky;
+  top: 0;
   background-color: white;
   width: 100%;
   padding: 20px;
@@ -25,25 +27,36 @@ const LinksContainer = styled.div`
   gap: 20px;
 `
 
-function Header() {
+function Header(props) {
 
   return (
     <HeaderContainer>
       <HeaderContent>
         <h1>PXLshare</h1>
         <LinksContainer>
-          <Link to={'/'}>
-            <HomeIcon />
-          </Link>
-          <Link to={'/upload'}>
-            <UploadIcon />
-          </Link>
-          <Link to={'/p/account'}>
-            <AccountIcon />
-          </Link>
+
+          {props.width > 600 ? 
+            <Link to={'/upload'}>
+              <UploadIcon />
+            </Link> : 
+            null}
+
+          {props.width > 600 ? 
+            <Link to={'/'}>
+              <HomeIcon />
+            </Link> : 
+            null}
+
           <Link to={'/logout'}>
             <LogoutIcon />
           </Link>
+
+          {props.width > 600 ? 
+            <Link to={'/p/account'}>
+              <AccountIcon />
+            </Link> : 
+            null}
+          
         </LinksContainer>
       </HeaderContent>
     </HeaderContainer>

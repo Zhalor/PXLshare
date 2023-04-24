@@ -1,14 +1,19 @@
 import styled from 'styled-components';
-import ProfilePicture from '../cog-outline.png';
+import TestImage from '../cog-outline.png';
 
 const StyledContentCard = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  height: 800px;
+  height: fit-content;
   border: 1px solid rgba(114, 114, 114, 0.2);
   background-color: white;
   border-radius: 5px;
+  padding-top: 8px;
+  margin-bottom: 50px;
+
+  > div:not(:last-child), > h2, > p {
+    padding: 0px 0px 8px 20px;
+  }
 `;
 
 const Container = styled.div`
@@ -16,8 +21,6 @@ const Container = styled.div`
   align-items: center;
   gap: 8px;
   padding: 8px;
-  border-top: 1px solid rgba(114, 114, 114, 0.2);
-  border-bottom: 1px solid rgba(114, 114, 114, 0.2);
 `;
 
 const StyledImage = styled.img`
@@ -27,10 +30,14 @@ const StyledImage = styled.img`
 
 const PostImage = styled.img`
   width: 100%;
+  border-top: 1px solid rgba(114, 114, 114, 0.2);
+  border-bottom: 1px solid rgba(114, 114, 114, 0.2);
+  margin-bottom: 8px;
 `;
 
 const CommentContainer = styled.div`
   display: flex;
+  border-top: 1px solid rgba(114, 114, 114, 0.2);
 `;
 
 const CommentInput = styled.input`
@@ -50,13 +57,13 @@ function ContentCard() {
   return (
    <StyledContentCard>
     <Container>
-      <StyledImage src={ProfilePicture} alt="" />
+      <StyledImage src={TestImage} alt="" />
       <h2>Username</h2>
     </Container>
-    <PostImage src={ProfilePicture} alt="" />
+    <PostImage src={TestImage} alt="" />
     <Container>
-      <StyledImage src={ProfilePicture} alt="" />
-      <StyledImage src={ProfilePicture} alt="" />
+      <StyledImage src={TestImage} alt="" />
+      <StyledImage src={TestImage} alt="" />
     </Container>
     <p>0 likes</p>
     <h2>Username</h2>
