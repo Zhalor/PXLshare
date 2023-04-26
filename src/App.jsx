@@ -20,21 +20,12 @@ const GlobalStyle = createGlobalStyle`
 
 function App() {
 
-  const [width, setWidth] = useState(window.innerWidth)
-
-  window.addEventListener('resize', () => {
-    const currentWidth = window.innerWidth;
-    setWidth(currentWidth);
-  });
-
   return (
     <>
     <GlobalStyle />
-    <Header width={width} />
+    <Header />
     <Content />
-    {width < 600 ? 
-      <Footer /> : 
-      null}
+    <Footer />
     </>
   )
 }
