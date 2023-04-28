@@ -5,6 +5,7 @@ import UploadIcon from '../icons/UploadIcon';
 import AccountIcon from '../icons/AccountIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import HomeIcon from '../icons/HomeIcon';
+import Logo from './Logo';
 
 const HeaderContainer = styled.header`
   position: sticky;
@@ -37,7 +38,7 @@ const StyledLink = styled(Link)`
 
 function Header() {
 
-  const [width, setWidth] = useState(window.innerWidth)
+  const [width, setWidth] = useState(window.innerWidth);
 
   window.addEventListener('resize', () => {
     const currentWidth = window.innerWidth;
@@ -48,7 +49,7 @@ function Header() {
     <HeaderContainer>
       <HeaderContent>
         <StyledLink to={'/'}>
-          <h1>PXLshare</h1>
+          <Logo>PXLshare</Logo>
         </StyledLink>
         <LinksContainer>
 
@@ -64,7 +65,7 @@ function Header() {
             </Link> : 
             null}
 
-          <Link to={'/logout'}>
+          <Link to={'/login'}>
             <LogoutIcon />
           </Link>
 

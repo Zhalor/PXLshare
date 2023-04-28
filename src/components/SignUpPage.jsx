@@ -74,26 +74,20 @@ const StyledLink = styled(Link)`
   font-weight: bold;
 `;
 
-const GuestButton = styled.button`
-  width: fit-content;
-  margin: 0px auto;
-  padding: 5px;
-  font-weight: bold;
-  font-size: .9rem;
-  text-align: center;
-`
+function SignUpPage() {
 
-
-function LoginPage() {
-
-  async function login() {
+  async function createAccount() {
     const auth = getAuth();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
     try {
-      const userCreds = await signInWithEmailAndPassword(auth, email, password);
+      const userCreds = await createUserWithEmailAndPassword(auth, email, password);
+      const updatedProfile = await updateProfile(auth.currentUser, {
+        displayName: username
+      })
       console.log(userCreds);
-      console.log(userCreds.user);
+      console.log(updatedProfile);
     } catch(e) {
       console.log(e);
     }
@@ -105,17 +99,17 @@ function LoginPage() {
       <LoginContainer>
         <FormContainer>
           <StyledLogo>PXLshare</StyledLogo>
+          <StyledInput type="text" placeholder='Username' id='username' />
           <StyledInput type="email" placeholder='Email Address' id='email' />
           <StyledInput type="password" placeholder='Password' id='password' />
-          <LoginButton type='button' onClick={login}>Login</LoginButton>
+          <StyledInput type="password" placeholder='Confirm Password' id='confirm-password' />
+          <LoginButton type='button' onClick={createAccount}>Create Account</LoginButton>
         </FormContainer>
-        <SignUpText>Don't have an account? <StyledLink to={'/sign-up'}>Sign Up</StyledLink></SignUpText>
-        <p>Wanna look around?</p>
-        <GuestButton>Login as Guest</GuestButton>
+        <SignUpText>Already have an account? <StyledLink to={'/login'}>Login</StyledLink></SignUpText>
       </LoginContainer>
     </Container>
     
   )
 }
 
-export default LoginPage;
+export default SignUpPage;
