@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from '../firebase';
+import { getAuth, signInWithEmailAndPassword } from '../firebase';
 import Image from '../cog-outline.png';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';

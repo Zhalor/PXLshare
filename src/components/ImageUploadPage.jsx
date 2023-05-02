@@ -27,30 +27,11 @@ function ImageUploadPage() {
     });
   }
 
-  async function login() {
-    const auth = getAuth();
-    const email = document.getElementById('emailLogin').value;
-    const password = document.getElementById('passwordLogin').value;
-    try {
-      const userCreds = await signInWithEmailAndPassword(auth, email, password);
-      console.log(userCreds);
-      console.log(userCreds.user);
-    } catch(e) {
-      console.log(e);
-    }
-  }
-
-
   return (
     <div>
       <input type='file' accept='image/*' id='fileInput' onChange={(e) => setFile(e.target.files[0])}/>
       <button type='button' onClick={uploadFile}>Upload</button>
       <button type='button' onClick={getUserInfo}>Get user info</button>
-      <div>
-        <input type="email" id='emailLogin' />
-        <input type="password" id='passwordLogin' />
-        <button type='button' onClick={login}>Login</button>
-      </div>
     </div>
   )
 }

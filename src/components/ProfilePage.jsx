@@ -1,8 +1,11 @@
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
+import { db, collection, doc, getDocs, getDoc, setDoc, getAuth, storage, ref, getDownloadURL} from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
 import TestImage from '../portfolio.png';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -72,21 +75,50 @@ const GalleryImage = styled.img`
 
 function ProfilePage() {
 
+  const [username, setUsername] = useState('');
+  const [profilePicture, setProfilePicture] = useState('');
+  const [bio, setBio] = useState('');
+
+  useEffect(() => {
+    getProfileInfo()
+  }, []);
+
+  async function getProfileInfo() {
+    try {
+      const auth = getAuth();
+      const snapshot = await getDoc(doc(db, auth.currentUser.displayName, 'UserInfo'));
+      const profileInfo = snapshot.data();
+      
+      setUsername(profileInfo.username);
+      setBio(profileInfo.bio);
+
+      const path = await getDownloadURL(ref(storage, profileInfo.profilePictureURL || 'default/default-profile-picture.png'));
+
+      setProfilePicture(path);
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  async function getUploads() {
+    const snapshot = await getDoc(doc(db, auth.currentUser.displayName, 'UserInfo'));
+  }
+
   return (
     <>
       <GlobalStyle />
       <Header />
       <ProfileContainer>
         <AccountInfoContainer>
-          <ProfilePicture src={TestImage} />
+          <ProfilePicture src={profilePicture} />
           <InfoContainer>
-            <h2>Test Account</h2>
+            <h2 onClick={getProfileInfo}>{username}</h2>
             <div>
               <p><span>9</span> Photos</p>
               <p><span>11</span> Followers</p>
               <p><span>28</span> Following</p>
             </div>
-            <p>This would be my bio</p>
+            <p>{bio}</p>
           </InfoContainer>
         </AccountInfoContainer>
         <Gallery>

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from '../firebase';
+import { getAuth, createUserWithEmailAndPassword, updateProfile, db, doc, setDoc } from '../firebase';
 import Image from '../cog-outline.png';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
@@ -85,7 +85,12 @@ function SignUpPage() {
       const userCreds = await createUserWithEmailAndPassword(auth, email, password);
       const updatedProfile = await updateProfile(auth.currentUser, {
         displayName: username
-      })
+      });
+      await setDoc(doc(db, auth.currentUser.displayName, 'UserInfo'), {
+        bio: '',
+        profilePictureURL: '',
+        username: auth.currentUser.displayName,
+      });
       console.log(userCreds);
       console.log(updatedProfile);
     } catch(e) {
@@ -99,10 +104,10 @@ function SignUpPage() {
       <LoginContainer>
         <FormContainer>
           <StyledLogo>PXLshare</StyledLogo>
-          <StyledInput type="text" placeholder='Username' id='username' />
-          <StyledInput type="email" placeholder='Email Address' id='email' />
-          <StyledInput type="password" placeholder='Password' id='password' />
-          <StyledInput type="password" placeholder='Confirm Password' id='confirm-password' />
+          <StyledInput type="text" placeholder='Username' id='username' required />
+          <StyledInput type="email" placeholder='Email Address' id='email' required />
+          <StyledInput type="password" placeholder='Password' id='password' required />
+          <StyledInput type="password" placeholder='Confirm Password' id='confirm-password' required />
           <LoginButton type='button' onClick={createAccount}>Create Account</LoginButton>
         </FormContainer>
         <SignUpText>Already have an account? <StyledLink to={'/login'}>Login</StyledLink></SignUpText>
