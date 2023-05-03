@@ -84,11 +84,12 @@ function SignUpPage() {
     try {
       const userCreds = await createUserWithEmailAndPassword(auth, email, password);
       const updatedProfile = await updateProfile(auth.currentUser, {
-        displayName: username
+        displayName: username,
+        photoURL: 'default/default-profile-picture.png',
       });
       await setDoc(doc(db, auth.currentUser.displayName, 'UserInfo'), {
         bio: '',
-        profilePictureURL: '',
+        profilePictureURL: auth.currentUser.photoURL,
         username: auth.currentUser.displayName,
       });
       console.log(userCreds);

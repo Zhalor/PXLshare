@@ -1,19 +1,33 @@
 import styled from 'styled-components';
 import { storage, ref, uploadBytes } from '../firebase';
 import { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from '../firebase';
+import { getAuth, onAuthStateChanged, db, collection, doc, getDocs, getDoc, setDoc, } from '../firebase';
 
 function ImageUploadPage() {
 
   const [file, setFile] = useState('');
 
   async function uploadFile() {
-    console.log(file, file.name);
-    const auth = getAuth();
-    const storageRef = ref(storage, `${auth.currentUser.displayName}/uploads/${file.name}`);
-
-    const uploadedFile = await uploadBytes(storageRef, file);
-    console.log('File has been uploaded', uploadedFile);
+    try {
+      console.log(file, file.name);
+      const auth = getAuth();
+      const storageURL = `${auth.currentUser.displayName}/uploads/${file.name}`;
+      const storageRef = ref(storage, storageURL);
+  
+      const uploadedFile = await uploadBytes(storageRef, file);
+      console.log('File has been uploaded', uploadedFile);
+  
+      await setDoc(doc(db, auth.currentUser.displayName, 'Uploads', file.name, 'Info'), {
+        desc: 'This is an upload',
+        url: storageURL
+      });
+  
+      await setDoc(doc(collection(db, auth.currentUser.displayName, 'Uploads', 'FileNames')), {
+        filename: file.name,
+      });
+    } catch(error) {
+      console.log(error)
+    }
   }
 
   async function getUserInfo() {

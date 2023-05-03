@@ -33,7 +33,7 @@ function RouteSwitch() {
         <Route path='/login' element={<LoginPage />} />
         <Route path='/sign-up' element={<SignUpPage />} />
         <Route path='/upload' element={<ImageUploadPage />} />
-        <Route path='/p/testUser' element={<ProfilePage />} />
+        <Route path='/p/:id' element={<ProfilePage />} />
       </Routes>
     </BrowserRouter>
   )

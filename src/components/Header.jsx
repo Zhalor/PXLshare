@@ -6,6 +6,7 @@ import AccountIcon from '../icons/AccountIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import HomeIcon from '../icons/HomeIcon';
 import Logo from './Logo';
+import { getAuth } from 'firebase/auth';
 
 const HeaderContainer = styled.header`
   position: sticky;
@@ -37,6 +38,8 @@ const StyledLink = styled(Link)`
 `;
 
 function Header() {
+
+  const auth = getAuth();
 
   const [width, setWidth] = useState(window.innerWidth);
 
@@ -70,7 +73,7 @@ function Header() {
           </Link>
 
           {width > 600 ? 
-            <Link to={'/p/testUser'}>
+            <Link to={`/p/${auth.currentUser.displayName}`}>
               <AccountIcon />
             </Link> : 
             null}

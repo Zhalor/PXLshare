@@ -78,9 +78,11 @@ function ProfilePage() {
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
   const [bio, setBio] = useState('');
+  const [images, setImages] = useState([]);
 
   useEffect(() => {
-    getProfileInfo()
+    getProfileInfo();
+    getUploads();
   }, []);
 
   async function getProfileInfo() {
@@ -101,7 +103,20 @@ function ProfilePage() {
   }
 
   async function getUploads() {
-    const snapshot = await getDoc(doc(db, auth.currentUser.displayName, 'UserInfo'));
+    try {
+      const auth = getAuth();
+      const snapshot = await getDocs(collection(db, auth.currentUser.displayName, 'Uploads', 'FileNames'));
+      const imageRef = ref(storage, `${auth.currentUser.displayName}/uploads`);
+      const arr = [];
+      snapshot.docs.forEach(item => {
+        const obj = item.data();
+        arr.push(obj.filename);
+      });
+      setImages(arr)
+      console.log(images);
+    } catch(error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -112,7 +127,7 @@ function ProfilePage() {
         <AccountInfoContainer>
           <ProfilePicture src={profilePicture} />
           <InfoContainer>
-            <h2 onClick={getProfileInfo}>{username}</h2>
+            <h2 onClick={getUploads}>{username}</h2>
             <div>
               <p><span>9</span> Photos</p>
               <p><span>11</span> Followers</p>
