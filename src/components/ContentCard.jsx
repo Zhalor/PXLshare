@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 import TestImage from '../cog-outline.png';
+import { getAuth, storage, getDownloadURL, ref } from '../firebase';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const StyledContentCard = styled.div`
   display: flex;
@@ -52,21 +55,39 @@ const PostBtn = styled.button`
   padding: 20px;
 `;
 
-function ContentCard() {
+function ContentCard(props) {
+
+  const auth = getAuth();
+  const [username, setUsername] = useState(Object.values(props.upload));
+  const [imageURL, setImageURL] = useState();
+
+  async function getImageURL() {
+    try {
+      const path = await getDownloadURL(ref(storage, `${username}/uploads/${Object.keys(props.upload)}`));
+      console.log(path);
+      setImageURL(path);
+    } catch(error) {
+      
+    }
+  }
+
+  useEffect(() => {
+    getImageURL();
+  }, []);
 
   return (
    <StyledContentCard>
     <Container>
       <StyledImage src={TestImage} alt="" />
-      <h2>Username</h2>
+      <h2 onClick={getImageURL} >{username}</h2>
     </Container>
-    <PostImage src={TestImage} alt="" />
+    <PostImage src={imageURL} alt="" />
     <Container>
       <StyledImage src={TestImage} alt="" />
       <StyledImage src={TestImage} alt="" />
     </Container>
     <p>0 likes</p>
-    <h2>Username</h2>
+    <h2>{username}</h2>
     <p>2 days ago</p>
     <CommentContainer>
       <CommentInput type="text" placeholder='Add a comment...' />

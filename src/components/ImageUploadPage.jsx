@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { storage, ref, uploadBytes } from '../firebase';
 import { useState } from 'react';
-import { getAuth, onAuthStateChanged, db, collection, doc, getDocs, getDoc, setDoc, } from '../firebase';
+import { getAuth, onAuthStateChanged, db, collection, doc, getDocs, getDoc, setDoc, updateDoc } from '../firebase';
 
 function ImageUploadPage() {
 
@@ -22,8 +22,14 @@ function ImageUploadPage() {
         url: storageURL
       });
   
-      await setDoc(doc(collection(db, auth.currentUser.displayName, 'Uploads', 'FileNames')), {
-        filename: file.name,
+      const names = await getDoc(doc(db, auth.currentUser.displayName, 'Uploads'));
+      const obj = names.data();
+      console.log(obj.filenames);
+      await updateDoc(doc(db, auth.currentUser.displayName, 'Uploads'), {
+        filenames: {
+          ...obj.filenames, 
+          [file.name]: auth.currentUser.displayName
+        },
       });
     } catch(error) {
       console.log(error)

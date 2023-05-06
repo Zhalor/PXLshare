@@ -4,6 +4,7 @@ import { db, collection, doc, getDocs, getDoc, setDoc, getAuth, storage, ref, ge
 import Header from './Header';
 import Footer from './Footer';
 import TestImage from '../portfolio.png';
+import GalleryImageContainer from './GalleryImageContainer';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
@@ -63,16 +64,6 @@ const Gallery = styled.div`
   border-top: 1px solid rgba(0, 0, 0, 0.2);
 `;
 
-const GalleryImageContainer = styled.div`
-  width: 300px;
-  height: 300px;
-`;
-
-const GalleryImage = styled.img`
-  width: 300px;
-  height: 300px;
-`;
-
 function ProfilePage() {
 
   const [username, setUsername] = useState('');
@@ -106,7 +97,6 @@ function ProfilePage() {
     try {
       const auth = getAuth();
       const snapshot = await getDocs(collection(db, auth.currentUser.displayName, 'Uploads', 'FileNames'));
-      const imageRef = ref(storage, `${auth.currentUser.displayName}/uploads`);
       const arr = [];
       snapshot.docs.forEach(item => {
         const obj = item.data();
@@ -137,33 +127,9 @@ function ProfilePage() {
           </InfoContainer>
         </AccountInfoContainer>
         <Gallery>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
-          <GalleryImageContainer>
-            <GalleryImage src={TestImage} />
-          </GalleryImageContainer>
+          {images.map(url => {
+            return <GalleryImageContainer url={url} username={username} />
+          })}
         </Gallery>
       </ProfileContainer>
       <Footer />
