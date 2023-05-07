@@ -37,16 +37,12 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-function Header() {
+function Header(props) {
 
   const auth = getAuth();
   const [username, setUsername] = useState('');
 
-  onAuthStateChanged(auth, (user) => {
-    if(user) {
-      setUsername(auth.currentUser.displayName);
-    }
-  });
+
   const [width, setWidth] = useState(window.innerWidth);
 
   window.addEventListener('resize', () => {
@@ -79,7 +75,7 @@ function Header() {
           </Link>
 
           {width > 600 ? 
-            <Link to={`/p/${username}`}>
+            <Link to={`/p/${props.user.displayName}`}>
               <AccountIcon />
             </Link> : 
             null}

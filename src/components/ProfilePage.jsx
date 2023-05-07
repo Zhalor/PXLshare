@@ -64,7 +64,7 @@ const Gallery = styled.div`
   border-top: 1px solid rgba(0, 0, 0, 0.2);
 `;
 
-function ProfilePage() {
+function ProfilePage(props) {
 
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
@@ -76,7 +76,7 @@ function ProfilePage() {
     getUploads();
   }, []);
 
-  async function getProfileInfo() {
+  async function getProfileInfo(props) {
     try {
       const auth = getAuth();
       const snapshot = await getDoc(doc(db, auth.currentUser.displayName, 'UserInfo'));
@@ -112,7 +112,7 @@ function ProfilePage() {
   return (
     <>
       <GlobalStyle />
-      <Header />
+      <Header user={props.user} />
       <ProfileContainer>
         <AccountInfoContainer>
           <ProfilePicture src={profilePicture} />

@@ -1,5 +1,8 @@
 import styled from 'styled-components';
 import TestImage from '../cog-outline.png';
+import LikedIcon from '../icons/LikedIcon';
+import  { ReactComponent as LikeIcon } from '../icons/LikeIcon.svg'
+import CommentIcon from '../icons/CommentIcon';
 import { getAuth, storage, getDownloadURL, ref } from '../firebase';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -36,6 +39,15 @@ const PostImage = styled.img`
   border-top: 1px solid rgba(114, 114, 114, 0.2);
   border-bottom: 1px solid rgba(114, 114, 114, 0.2);
   margin-bottom: 8px;
+`;
+
+const StyledLikeIcon = styled(LikeIcon)`
+  transition: fill .5s;
+
+  &:hover {
+    fill: red;
+    cursor: pointer;
+  }
 `;
 
 const CommentContainer = styled.div`
@@ -83,8 +95,8 @@ function ContentCard(props) {
     </Container>
     <PostImage src={imageURL} alt="" />
     <Container>
-      <StyledImage src={TestImage} alt="" />
-      <StyledImage src={TestImage} alt="" />
+      <StyledLikeIcon />
+      <CommentIcon />
     </Container>
     <p>0 likes</p>
     <h2>{username}</h2>

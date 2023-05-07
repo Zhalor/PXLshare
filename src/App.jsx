@@ -2,11 +2,11 @@ import Header from './components/Header';
 import Content from './components/Content';
 import Footer from './components/Footer';
 
-function App() {
+function App(props) {
 
   return (
     <>
-    <Header />
+    <Header user={props.user} />
     <Content />
     <Footer />
     </>

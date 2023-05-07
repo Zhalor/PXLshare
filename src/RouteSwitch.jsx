@@ -6,7 +6,8 @@ import ProfilePage from './components/ProfilePage';
 import LoginPage from './components/LoginPage';
 import SignUpPage from './components/SignUpPage';
 import { createGlobalStyle } from 'styled-components';
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from './firebase';
+import { useState } from 'react';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -22,18 +23,25 @@ const GlobalStyle = createGlobalStyle`
 `
 
 function RouteSwitch() {
-
+  
+  const [firebaseUser, setFirebaseUser] = useState({})
   const auth = getAuth();
+  onAuthStateChanged(auth, (user) => {
+    if(user) {
+      setFirebaseUser(auth.currentUser);
+    }
+  });
+  
 
   return (
     <BrowserRouter>
       <GlobalStyle />
       <Routes>
-        <Route path='/' element={<App />} />
+        <Route path='/' element={<App user={firebaseUser} />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/sign-up' element={<SignUpPage />} />
-        <Route path='/upload' element={<ImageUploadPage />} />
-        <Route path='/p/:id' element={<ProfilePage />} />
+        <Route path='/upload' element={<ImageUploadPage user={firebaseUser} />} />
+        <Route path='/p/:id' element={<ProfilePage user={firebaseUser} />} />
       </Routes>
     </BrowserRouter>
   )
