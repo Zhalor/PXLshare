@@ -6,7 +6,8 @@ import AccountIcon from '../icons/AccountIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import HomeIcon from '../icons/HomeIcon';
 import Logo from './Logo';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
+import { UserContext } from '../RouteSwitch';
+import { useContext } from 'react';
 
 const HeaderContainer = styled.header`
   position: sticky;
@@ -37,12 +38,9 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 `;
 
-function Header(props) {
+function Header() {
 
-  const auth = getAuth();
-  const [username, setUsername] = useState('');
-
-
+  const user = useContext(UserContext);
   const [width, setWidth] = useState(window.innerWidth);
 
   window.addEventListener('resize', () => {
@@ -75,7 +73,7 @@ function Header(props) {
           </Link>
 
           {width > 600 ? 
-            <Link to={`/p/${props.user.displayName}`}>
+            <Link to={`/p/${user.displayName}`}>
               <AccountIcon />
             </Link> : 
             null}

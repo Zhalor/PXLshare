@@ -3,6 +3,8 @@ import { getAuth, signInWithEmailAndPassword } from '../firebase';
 import Image from '../cog-outline.png';
 import { Link } from 'react-router-dom';
 import Logo from './Logo';
+import { UserContext } from '../RouteSwitch';
+import { useContext } from 'react';
 
 const Container = styled.div`
   display: flex;
@@ -86,6 +88,8 @@ const GuestButton = styled.button`
 
 function LoginPage() {
 
+  const user = useContext(UserContext);
+
   async function login() {
     const auth = getAuth();
     const email = document.getElementById('email').value;
@@ -99,12 +103,16 @@ function LoginPage() {
     }
   }
 
+  function showUser() {
+    console.log(user);
+  }
+
   return (
     <Container>
       <LoginImage src={Image} alt="" />
       <LoginContainer>
         <FormContainer>
-          <StyledLogo>PXLshare</StyledLogo>
+          <StyledLogo onClick={showUser}>PXLshare</StyledLogo>
           <StyledInput type="email" placeholder='Email Address' id='email' />
           <StyledInput type="password" placeholder='Password' id='password' />
           <LoginButton type='button' onClick={login}>Login</LoginButton>

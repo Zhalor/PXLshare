@@ -3,10 +3,14 @@ import { createGlobalStyle } from 'styled-components';
 import { db, collection, doc, getDocs, getDoc, setDoc, getAuth, storage, ref, getDownloadURL} from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
-import TestImage from '../portfolio.png';
+import ProfileFollowers from './ProfileFollowers';
+import ProfileFollowing from './ProfileFollowing';
+import Gallery from './Gallery';
 import GalleryImageContainer from './GalleryImageContainer';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
+import { UserContext } from '../RouteSwitch';
+import { useFollowers } from '../hooks/useFollowers';
+import { useFollowing } from '../hooks/useFollowing';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -54,32 +58,26 @@ const InfoContainer = styled.div`
   }
 `;
 
-const Gallery = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  gap: 30px;
-  justify-content: center;
-  margin-top: 30px;
-  padding-top: 30px;
-  border-top: 1px solid rgba(0, 0, 0, 0.2);
-`;
-
-function ProfilePage(props) {
-
+function ProfilePage() {
+  const auth = getAuth();
+  const user = useContext(UserContext);
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
   const [bio, setBio] = useState('');
   const [images, setImages] = useState([]);
+  const [followers] = useFollowers('TvRyKdtZOJVXbzsBWT8dNj2ZqI83');
+  const [following] = useFollowing('TvRyKdtZOJVXbzsBWT8dNj2ZqI83');
+  const [display, setDisplay] = useState('gallery');
+
 
   useEffect(() => {
     getProfileInfo();
     getUploads();
   }, []);
 
-  async function getProfileInfo(props) {
+  async function getProfileInfo() {
     try {
-      const auth = getAuth();
-      const snapshot = await getDoc(doc(db, auth.currentUser.displayName, 'UserInfo'));
+      const snapshot = await getDoc(doc(db, user.displayName, 'UserInfo'));
       const profileInfo = snapshot.data();
       
       setUsername(profileInfo.username);
@@ -95,8 +93,7 @@ function ProfilePage(props) {
 
   async function getUploads() {
     try {
-      const auth = getAuth();
-      const snapshot = await getDocs(collection(db, auth.currentUser.displayName, 'Uploads', 'FileNames'));
+      const snapshot = await getDocs(collection(db, user.displayName, 'Uploads', 'FileNames'));
       const arr = [];
       snapshot.docs.forEach(item => {
         const obj = item.data();
@@ -109,28 +106,36 @@ function ProfilePage(props) {
     }
   }
 
+  function handleClick(disp) {
+    setDisplay(disp);
+  }
+
   return (
     <>
       <GlobalStyle />
-      <Header user={props.user} />
+      <Header />
       <ProfileContainer>
         <AccountInfoContainer>
           <ProfilePicture src={profilePicture} />
           <InfoContainer>
             <h2 onClick={getUploads}>{username}</h2>
             <div>
-              <p><span>9</span> Photos</p>
-              <p><span>11</span> Followers</p>
-              <p><span>28</span> Following</p>
+              <p onClick={() => handleClick('gallery')}><span>{images.length}</span> Photos</p>
+              <p onClick={() => handleClick('followers')}>
+                <span>{followers && followers.length}</span> Followers 
+              </p>
+              <p onClick={() => handleClick('following')}><span>{following && following.length}</span> Following</p>
             </div>
             <p>{bio}</p>
           </InfoContainer>
         </AccountInfoContainer>
-        <Gallery>
-          {images.map(url => {
-            return <GalleryImageContainer url={url} username={username} />
-          })}
-        </Gallery>
+        {display === 'gallery' ?
+        <Gallery images={images} username={username} />
+        : display === 'followers' ?
+        <ProfileFollowers followers={followers} />
+        : display === 'following' ?
+        <ProfileFollowing following={following} />
+        : null}
       </ProfileContainer>
       <Footer />
     </>

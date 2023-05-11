@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { createContext } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import App from './App';
 import ImageUploadPage from "./components/ImageUploadPage"
 import ProfilePage from './components/ProfilePage';
@@ -8,6 +8,7 @@ import SignUpPage from './components/SignUpPage';
 import { createGlobalStyle } from 'styled-components';
 import { getAuth, onAuthStateChanged } from './firebase';
 import { useState } from 'react';
+import { useEffect } from 'react';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -21,30 +22,43 @@ const GlobalStyle = createGlobalStyle`
     background-color: whitesmoke;
   }
 `
+const UserContext = createContext();
 
 function RouteSwitch() {
   
-  const [firebaseUser, setFirebaseUser] = useState({})
-  const auth = getAuth();
-  onAuthStateChanged(auth, (user) => {
-    if(user) {
-      setFirebaseUser(auth.currentUser);
-    }
-  });
+  const [firebaseUser, setFirebaseUser] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  
+  useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if(user) {
+        setFirebaseUser(auth.currentUser);
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    });
+    console.log(firebaseUser);
+  }, []);
+  
   
 
+
   return (
+    <UserContext.Provider value={firebaseUser}>
     <BrowserRouter>
       <GlobalStyle />
-      <Routes>
-        <Route path='/' element={<App user={firebaseUser} />} />
+      <Routes>     
+        <Route path='/' element={isLoggedIn ? <App /> : <Navigate to='/login' />} />
+        <Route path='/upload' element={<ImageUploadPage />} />
+        <Route path='/p/:id' element={<ProfilePage />} />
         <Route path='/login' element={<LoginPage />} />
         <Route path='/sign-up' element={<SignUpPage />} />
-        <Route path='/upload' element={<ImageUploadPage user={firebaseUser} />} />
-        <Route path='/p/:id' element={<ProfilePage user={firebaseUser} />} />
       </Routes>
     </BrowserRouter>
+    </UserContext.Provider>
   )
 }
 
-export default RouteSwitch;
+export { RouteSwitch, UserContext };

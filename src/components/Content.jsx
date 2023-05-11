@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import ContentCard from './ContentCard';
 import { db, collection, doc, getDocs, getDoc, setDoc, getAuth, storage, ref, getDownloadURL } from '../firebase';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useContext, useState } from 'react';
+import { UserContext } from '../RouteSwitch';
 
 const ContentContainer = styled.div`
   width: 500px;
@@ -11,6 +11,7 @@ const ContentContainer = styled.div`
 
 function Content() {
 
+  const user = useContext(UserContext);
   const [following, setFollowing] = useState([]);
   const [folowingImages, setFollowingImages] = useState([]);
   
@@ -25,7 +26,7 @@ function Content() {
   async function getFollowing() {
     try {
       const auth = getAuth();
-      const followingList = await getDocs(collection(db, auth.currentUser.displayName, 'Following', 'Usernames'));
+      const followingList = await getDocs(collection(db, user.displayName, 'Following', 'Usernames'));
       const arr = [];
 
       followingList.docs.forEach(user => {

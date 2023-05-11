@@ -1,9 +1,9 @@
+import { useState, useEffect, useContext,useCallback } from 'react';
 import styled from 'styled-components';
 import { storage, ref, uploadBytes, getDownloadURL, deleteObject } from '../firebase';
-import { useState } from 'react';
-import { getAuth, onAuthStateChanged, db, doc, getDoc, setDoc, updateDoc } from '../firebase';
+import { getAuth, db, doc, getDoc, setDoc, updateDoc } from '../firebase';
 import Cropper from 'react-easy-crop';
-import { useEffect } from 'react';
+import { UserContext } from '../RouteSwitch';
 import Header from './Header';
 
 const CropperWrapper = styled.div`
@@ -13,13 +13,18 @@ const CropperWrapper = styled.div`
   height: 600px;
 `;
 
-function ImageUploadPage(props) {
+function ImageUploadPage() {
 
+  const user = useContext(UserContext);
   const [crop, setCrop] = useState({x: 0, y: 0});
   const [zoom, setZoom] = useState(1);
   const [file, setFile] = useState('');
   const [imageURL, setImageURL] = useState('');
-  const auth = getAuth();
+
+   const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
+    console.log(croppedArea);
+    console.log(croppedAreaPixels);
+  }, [])
 
   useEffect(() => {
     handleFileChange();
@@ -28,14 +33,13 @@ function ImageUploadPage(props) {
   async function handleFileChange() {
     if(file) {
       try {
-        const storageURL = `${auth.currentUser.displayName}/uploads/${file.name}`;
+        const storageURL = `${user.uid}/uploads/${file.name}`;
         const storageRef = ref(storage, storageURL);
-    
         const uploadedFile = await uploadBytes(storageRef, file);
         console.log('File has been uploaded', uploadedFile);
+
         const url = await getDownloadURL(storageRef);
         setImageURL(url);
-        console.log(imageURL, url);
       } catch(error) {
         console.log(error)
       }
@@ -43,19 +47,19 @@ function ImageUploadPage(props) {
   }
 
   async function back() {
-    setFile('');
     try {
-      const storageURL = `${auth.currentUser.displayName}/uploads/${file.name}`;
+      const storageURL = `${user.uid}/uploads/${file.name}`;
       const storageRef = ref(storage, storageURL);
       await deleteObject(storageRef);
     } catch(error) {
       console.log(error);
     }
+    setFile('');
   }
 
   async function uploadFile() {
     try {
-      const storageURL = `${auth.currentUser.displayName}/uploads/${file.name}`;
+      const storageURL = `${user.uid}/uploads/${file.name}`;
       const storageRef = ref(storage, storageURL);
   
       const uploadedFile = await uploadBytes(storageRef, file);
@@ -67,18 +71,18 @@ function ImageUploadPage(props) {
 
   async function uploadFile() {
     try {  
-      await setDoc(doc(db, auth.currentUser.displayName, 'Uploads', file.name, 'Info'), {
+      await setDoc(doc(db, user.uid, 'Uploads', file.name, 'Info'), {
         desc: 'This is an upload',
         url: storageURL
       });
   
-      const names = await getDoc(doc(db, auth.currentUser.displayName, 'Uploads'));
+      const names = await getDoc(doc(db, user.uid, 'Uploads'));
       const obj = names.data();
       console.log(obj.filenames);
-      await updateDoc(doc(db, auth.currentUser.displayName, 'Uploads'), {
+      await updateDoc(doc(db, user.uid, 'Uploads'), {
         filenames: {
           ...obj.filenames, 
-          [file.name]: auth.currentUser.displayName
+          [user.uid]: file.name
         },
       });
     } catch(error) {
@@ -87,21 +91,13 @@ function ImageUploadPage(props) {
   }
 
   async function getUserInfo() {
-    console.log(file, file.name);
-    console.log(zoom);
-    const auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        console.log(auth.currentUser);
-      } else {
-        console.log('not ready');
-      }
-    });
+    console.log(user);
+    console.log(crop);
   }
 
   return (
     <div>
-      <Header user={props.user} />
+      <Header user={user} />
       {file ? 
         <CropperWrapper>
           <Cropper
@@ -110,7 +106,9 @@ function ImageUploadPage(props) {
             zoom={zoom}
             aspect={4 / 3}
             onCropChange={setCrop}
-            onZoomChange={setZoom} />
+            onZoomChange={setZoom}
+            onCropComplete={onCropComplete} 
+          />
         </CropperWrapper>
           : 
         <div>

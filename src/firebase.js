@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion } from "firebase/firestore"; 
+import { getFirestore, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, query, where } from "firebase/firestore"; 
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 
@@ -17,6 +17,18 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
+async function getFirebaseUserDoc(uid) {
+  const q = query(collection(db, 'users'), where('uid', '==', uid));
+  const users = await getDocs(q);
+  const arr = [];
+  users.docs.forEach(user => {
+    const obj = user.data();
+    arr.push(obj)
+  });
+  console.log(arr[0]);
+  return arr[0];
+}
+
 export { db, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, storage, ref, uploadBytes, getDownloadURL, deleteObject,
    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signOut,
-   onAuthStateChanged, updateProfile }
+   onAuthStateChanged, updateProfile, getFirebaseUserDoc }

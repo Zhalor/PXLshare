@@ -83,14 +83,15 @@ function SignUpPage() {
     const username = document.getElementById('username').value;
     try {
       const userCreds = await createUserWithEmailAndPassword(auth, email, password);
-      const updatedProfile = await updateProfile(auth.currentUser, {
+      const updatedProfile = await updateProfile(auth.uid, {
         displayName: username,
         photoURL: 'default/default-profile-picture.png',
       });
-      await setDoc(doc(db, auth.currentUser.displayName, 'UserInfo'), {
+      await setDoc(doc(db, auth.currentUser.uid, 'UserInfo'), {
         bio: '',
         profilePictureURL: auth.currentUser.photoURL,
         username: auth.currentUser.displayName,
+        uid: auth.currentUser.uid
       });
       console.log(userCreds);
       console.log(updatedProfile);
