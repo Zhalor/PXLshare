@@ -51,7 +51,7 @@ function Header() {
   return (
     <HeaderContainer>
       <HeaderContent>
-        <StyledLink to={'/'}>
+        <StyledLink to='/'>
           <Logo>PXLshare</Logo>
         </StyledLink>
         <LinksContainer>
@@ -73,7 +73,7 @@ function Header() {
           </Link>
 
           {width > 600 ? 
-            <Link to={`/p/${user.displayName}`}>
+            <Link to={`/p/${user.displayName}`} state={{uid: user.uid}}>
               <AccountIcon />
             </Link> : 
             null}

@@ -41,9 +41,6 @@ function RouteSwitch() {
     });
     console.log(firebaseUser);
   }, []);
-  
-  
-
 
   return (
     <UserContext.Provider value={firebaseUser}>

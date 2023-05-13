@@ -9,10 +9,8 @@ function useFollowers(uid) {
     async function getFollowers() {
       try {
         const user = await getFirebaseUserDoc(uid);
-        console.log(user.followers);
         setFollowers(user.followers);
       } catch (error) {
-        console.log(error);
         return error;
       }
     }

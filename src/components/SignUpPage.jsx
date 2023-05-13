@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { getAuth, createUserWithEmailAndPassword, updateProfile, db, doc, setDoc } from '../firebase';
 import Image from '../cog-outline.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 
 const Container = styled.div`
@@ -76,28 +76,31 @@ const StyledLink = styled(Link)`
 
 function SignUpPage() {
 
+  let navigate = useNavigate();
+
   async function createAccount() {
     const auth = getAuth();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const username = document.getElementById('username').value;
-    try {
+
       const userCreds = await createUserWithEmailAndPassword(auth, email, password);
-      const updatedProfile = await updateProfile(auth.uid, {
+      const updatedProfile = await updateProfile(auth.currentUser, {
         displayName: username,
         photoURL: 'default/default-profile-picture.png',
       });
-      await setDoc(doc(db, auth.currentUser.uid, 'UserInfo'), {
+      await setDoc(doc(db, 'users', auth.currentUser.uid), {
         bio: '',
+        followers: [],
+        following: [],
         profilePictureURL: auth.currentUser.photoURL,
         username: auth.currentUser.displayName,
-        uid: auth.currentUser.uid
+        uid: auth.currentUser.uid,
       });
       console.log(userCreds);
       console.log(updatedProfile);
-    } catch(e) {
-      console.log(e);
-    }
+      navigate('/');
+   
   }
 
   return (

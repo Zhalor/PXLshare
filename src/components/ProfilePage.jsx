@@ -6,11 +6,11 @@ import Footer from './Footer';
 import ProfileFollowers from './ProfileFollowers';
 import ProfileFollowing from './ProfileFollowing';
 import Gallery from './Gallery';
-import GalleryImageContainer from './GalleryImageContainer';
 import { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../RouteSwitch';
 import { useFollowers } from '../hooks/useFollowers';
 import { useFollowing } from '../hooks/useFollowing';
+import { useLocation } from 'react-router-dom';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -59,14 +59,15 @@ const InfoContainer = styled.div`
 `;
 
 function ProfilePage() {
-  const auth = getAuth();
+
   const user = useContext(UserContext);
+  const { uid } = useLocation().state;
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
   const [bio, setBio] = useState('');
   const [images, setImages] = useState([]);
-  const [followers] = useFollowers('TvRyKdtZOJVXbzsBWT8dNj2ZqI83');
-  const [following] = useFollowing('TvRyKdtZOJVXbzsBWT8dNj2ZqI83');
+  const [followers] = useFollowers(uid);
+  const [following] = useFollowing(uid);
   const [display, setDisplay] = useState('gallery');
 
 

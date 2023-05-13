@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { getAuth, signInWithEmailAndPassword } from '../firebase';
 import Image from '../cog-outline.png';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import { UserContext } from '../RouteSwitch';
 import { useContext } from 'react';
@@ -89,6 +89,7 @@ const GuestButton = styled.button`
 function LoginPage() {
 
   const user = useContext(UserContext);
+  let navigate = useNavigate();
 
   async function login() {
     const auth = getAuth();
@@ -98,6 +99,7 @@ function LoginPage() {
       const userCreds = await signInWithEmailAndPassword(auth, email, password);
       console.log(userCreds);
       console.log(userCreds.user);
+      navigate('/');
     } catch(e) {
       console.log(e);
     }
