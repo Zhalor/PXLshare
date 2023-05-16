@@ -43,7 +43,7 @@ function GalleryImageContainer(props) {
 
   async function getImageURL() {
     try {
-      const path = await getDownloadURL(ref(storage, `${props.username}/uploads/${props.url}`));
+      const path = await getDownloadURL(ref(storage, props.image.url));
       setImageURL(path);
     } catch(error) {
       console.log(error);
@@ -54,7 +54,7 @@ function GalleryImageContainer(props) {
     <ImageContainer>
       <Image src={imageURL} />
       <ImageOverlay >
-        hello there
+        {props.image.likes && props.image.likes.length}
       </ImageOverlay>
     </ImageContainer>
   )

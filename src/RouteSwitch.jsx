@@ -39,7 +39,6 @@ function RouteSwitch() {
         setIsLoggedIn(false);
       }
     });
-    console.log(firebaseUser);
   }, []);
 
   return (

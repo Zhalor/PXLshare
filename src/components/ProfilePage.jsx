@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
-import { db, collection, doc, getDocs, getDoc, setDoc, getAuth, storage, ref, getDownloadURL} from '../firebase';
+import { db, collection, doc, getDocs, getDoc, storage, ref, getDownloadURL} from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
 import ProfileFollowers from './ProfileFollowers';
 import ProfileFollowing from './ProfileFollowing';
 import Gallery from './Gallery';
-import { useState, useContext, useEffect } from 'react';
-import { UserContext } from '../RouteSwitch';
+import { useState, useEffect, useContext } from 'react';
 import { useFollowers } from '../hooks/useFollowers';
 import { useFollowing } from '../hooks/useFollowing';
+import { UserContext } from '../RouteSwitch';
 import { useLocation } from 'react-router-dom';
 
 const GlobalStyle = createGlobalStyle`
@@ -53,6 +53,15 @@ const InfoContainer = styled.div`
     gap: 40px;
   }
 
+  > div > button {
+    padding: 6px 12px;
+    font-size: 1rem;
+    background-color: #2370ff;
+    border: 1px solid lightblue;
+    border-radius: 6px;
+    color: white;
+  }
+
   > div > p > span {
     font-weight: bold;
   }
@@ -74,17 +83,18 @@ function ProfilePage() {
   useEffect(() => {
     getProfileInfo();
     getUploads();
-  }, []);
+    setDisplay('gallery');
+  }, [uid]);
 
   async function getProfileInfo() {
     try {
-      const snapshot = await getDoc(doc(db, user.displayName, 'UserInfo'));
-      const profileInfo = snapshot.data();
+      const data = await getDoc(doc(db, 'users', uid));
+      const profileInfo = data.data();
       
       setUsername(profileInfo.username);
       setBio(profileInfo.bio);
 
-      const path = await getDownloadURL(ref(storage, profileInfo.profilePictureURL || 'default/default-profile-picture.png'));
+      const path = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));
 
       setProfilePicture(path);
     } catch(error) {
@@ -94,11 +104,11 @@ function ProfilePage() {
 
   async function getUploads() {
     try {
-      const snapshot = await getDocs(collection(db, user.displayName, 'Uploads', 'FileNames'));
+      const snapshot = await getDocs(collection(db, 'users', uid, 'Uploads'));
       const arr = [];
       snapshot.docs.forEach(item => {
         const obj = item.data();
-        arr.push(obj.filename);
+        arr.push(obj);
       });
       setImages(arr)
       console.log(images);
@@ -119,7 +129,13 @@ function ProfilePage() {
         <AccountInfoContainer>
           <ProfilePicture src={profilePicture} />
           <InfoContainer>
-            <h2 onClick={getUploads}>{username}</h2>
+            <div>
+              <h2 onClick={getUploads}>{username}</h2>
+              {user.uid != uid ?
+                <button>Follow</button>
+              :
+                null}
+            </div>
             <div>
               <p onClick={() => handleClick('gallery')}><span>{images.length}</span> Photos</p>
               <p onClick={() => handleClick('followers')}>

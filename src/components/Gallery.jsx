@@ -14,8 +14,8 @@ const StyledGallery = styled.div`
 function Gallery(props) {
   return (
     <StyledGallery>
-      {props.images.map(url => {
-              return <GalleryImageContainer url={url} username={props.username} />
+      {props.images.map(image => {
+              return <GalleryImageContainer image={image} username={props.username} />
             })}
     </StyledGallery>
   )

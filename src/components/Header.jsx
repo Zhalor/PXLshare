@@ -73,7 +73,7 @@ function Header() {
           </Link>
 
           {width > 600 ? 
-            <Link to={`/p/${user.displayName}`} state={{uid: user.uid}}>
+            <Link to={`/p/${user.displayName}`} state={{uid: user.uid, disp: 'gallery'}}>
               <AccountIcon />
             </Link> : 
             null}

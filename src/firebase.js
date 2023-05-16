@@ -25,7 +25,6 @@ async function getFirebaseUserDoc(uid) {
     const obj = user.data();
     arr.push(obj)
   });
-  console.log(arr[0]);
   return arr[0];
 }
 
