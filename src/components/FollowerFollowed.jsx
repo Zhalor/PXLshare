@@ -5,10 +5,10 @@ import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: start;
   align-items: center;
   gap: 20px;
-  width: 200px;
+  width: 300px;
   border-radius: 6px;
   padding: 8px;
   font-size: 1.3rem;
@@ -22,6 +22,7 @@ const Container = styled.div`
 const ProfilePicture = styled.img`
   width: 48px;
   height: 48px;
+  border-radius: 50%
 `;
 
 const StyledLink = styled(Link)`
@@ -37,16 +38,16 @@ function FollowerFollowed(props) {
   useEffect(() => {
     async function getUserInfo() {
       const user = await getFirebaseUserDoc(props.uid);
-      const image = await getDownloadURL(ref(storage, user.profilePictureURL || 'default/default-profile-picture.png'));
+      const profPic = await getDownloadURL(ref(storage, user.profilePictureURL));
       setUsername(user.username);
-      setProfilePicture(image)
+      setProfilePicture(profPic)
     }
 
     getUserInfo();
   }, []);
   
   return (
-    <StyledLink to={`/p/${username}`} state={{uid: props.uid, disp: 'gallery'}}>
+    <StyledLink to={`/p/${username}`} state={{uid: props.uid}}>
       <Container>
         <ProfilePicture src={profilePicture} alt="" />
         {username}

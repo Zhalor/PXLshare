@@ -1,14 +1,12 @@
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
-import { db, collection, doc, getDocs, getDoc, storage, ref, getDownloadURL} from '../firebase';
+import { db, collection, doc, getDocs, getDoc, storage, ref, getDownloadURL, updateDoc, arrayUnion, arrayRemove, getFirebaseUserDoc} from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
 import ProfileFollowers from './ProfileFollowers';
 import ProfileFollowing from './ProfileFollowing';
 import Gallery from './Gallery';
 import { useState, useEffect, useContext } from 'react';
-import { useFollowers } from '../hooks/useFollowers';
-import { useFollowing } from '../hooks/useFollowing';
 import { UserContext } from '../RouteSwitch';
 import { useLocation } from 'react-router-dom';
 
@@ -75,10 +73,19 @@ function ProfilePage() {
   const [profilePicture, setProfilePicture] = useState('');
   const [bio, setBio] = useState('');
   const [images, setImages] = useState([]);
-  const [followers] = useFollowers(uid);
-  const [following] = useFollowing(uid);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
+  const [currentUserFollowing, setCurrentUserFollowing] = useState([])
   const [display, setDisplay] = useState('gallery');
 
+  useEffect(() => {
+    async function getCurrentUserFollowing() {
+      const data = await getFirebaseUserDoc(user.uid);
+      setCurrentUserFollowing(data.following);
+    }
+
+    getCurrentUserFollowing();
+  }, []);
 
   useEffect(() => {
     getProfileInfo();
@@ -93,7 +100,9 @@ function ProfilePage() {
       
       setUsername(profileInfo.username);
       setBio(profileInfo.bio);
-
+      setFollowers(profileInfo.followers);
+      setFollowing(profileInfo.following);
+      
       const path = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));
 
       setProfilePicture(path);
@@ -117,8 +126,35 @@ function ProfilePage() {
     }
   }
 
-  function handleClick(disp) {
+  async function followUser() {
+    await updateDoc(doc(db, 'users', user.uid), {
+      following: arrayUnion(uid)
+    });
+
+    await updateDoc(doc(db, 'users', uid), {
+      followers: arrayUnion(user.uid)
+    });
+
+    setCurrentUserFollowing([...currentUserFollowing, uid]);
+    setFollowers([...followers, user.uid]);
+  }
+
+  async function unfollowUser() {
+    await updateDoc(doc(db, 'users', user.uid), {
+      following: arrayRemove(uid)
+    });
+
+    await updateDoc(doc(db, 'users', uid), {
+      followers: arrayRemove(user.uid)
+    });
+    console.log(currentUserFollowing)
+    setCurrentUserFollowing(currentUserFollowing.filter(item => item !== uid));
+    setFollowers(followers.filter(item => item == uid));
+  }
+
+  function changeDisplay(disp) {
     setDisplay(disp);
+    console.log(currentUserFollowing)
   }
 
   return (
@@ -131,28 +167,38 @@ function ProfilePage() {
           <InfoContainer>
             <div>
               <h2 onClick={getUploads}>{username}</h2>
-              {user.uid != uid ?
-                <button>Follow</button>
-              :
-                null}
+              {
+                currentUserFollowing.includes(uid) == true ?
+                  <button onClick={unfollowUser}>Unfollow</button>
+                :
+                user.uid != uid ?
+                  <button onClick={followUser}>Follow</button>
+                :
+                null
+              }
             </div>
             <div>
-              <p onClick={() => handleClick('gallery')}><span>{images.length}</span> Photos</p>
-              <p onClick={() => handleClick('followers')}>
+              <p onClick={() => changeDisplay('gallery')}><span>{images.length}</span> Photos</p>
+              <p onClick={() => changeDisplay('followers')}>
                 <span>{followers && followers.length}</span> Followers 
               </p>
-              <p onClick={() => handleClick('following')}><span>{following && following.length}</span> Following</p>
+              <p onClick={() => changeDisplay('following')}><span>{following && following.length}</span> Following</p>
             </div>
             <p>{bio}</p>
           </InfoContainer>
         </AccountInfoContainer>
-        {display === 'gallery' ?
-        <Gallery images={images} username={username} />
-        : display === 'followers' ?
-        <ProfileFollowers followers={followers} />
-        : display === 'following' ?
-        <ProfileFollowing following={following} />
-        : null}
+        {
+          display === 'gallery' ?
+            <Gallery images={images} username={username} />
+          :
+          display === 'followers' ?
+            <ProfileFollowers followers={followers} />
+          :
+          display === 'following' ?
+            <ProfileFollowing following={following} />
+          :
+          null
+        }
       </ProfileContainer>
       <Footer />
     </>

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, query, where } from "firebase/firestore"; 
+import { getFirestore, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, query, where } from "firebase/firestore"; 
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 
@@ -28,6 +28,6 @@ async function getFirebaseUserDoc(uid) {
   return arr[0];
 }
 
-export { db, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, storage, ref, uploadBytes, getDownloadURL, deleteObject,
+export { db, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, storage, ref, uploadBytes, getDownloadURL, deleteObject,
    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signOut,
    onAuthStateChanged, updateProfile, getFirebaseUserDoc }
