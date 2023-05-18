@@ -29,5 +29,5 @@ async function getFirebaseUserDoc(uid) {
 }
 
 export { db, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, storage, ref, uploadBytes, getDownloadURL, deleteObject,
-   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signOut,
+   query, where, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signOut,
    onAuthStateChanged, updateProfile, getFirebaseUserDoc }

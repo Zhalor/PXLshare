@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import TestImage from '../cog-outline.png';
-import LikedIcon from '../icons/LikedIcon';
-import  { ReactComponent as LikeIcon } from '../icons/LikeIcon.svg'
+import  { ReactComponent as Like } from '../icons/Like.svg'
 import CommentIcon from '../icons/CommentIcon';
 import { getAuth, storage, getDownloadURL, ref } from '../firebase';
 import { useState } from 'react';
@@ -41,7 +40,7 @@ const PostImage = styled.img`
   margin-bottom: 8px;
 `;
 
-const StyledLikeIcon = styled(LikeIcon)`
+const StyledLikeIcon = styled(Like)`
   transition: fill .5s;
 
   &:hover {

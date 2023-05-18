@@ -120,7 +120,6 @@ function ProfilePage() {
         arr.push(obj);
       });
       setImages(arr)
-      console.log(images);
     } catch(error) {
       console.log(error)
     }
@@ -147,14 +146,13 @@ function ProfilePage() {
     await updateDoc(doc(db, 'users', uid), {
       followers: arrayRemove(user.uid)
     });
-    console.log(currentUserFollowing)
+
     setCurrentUserFollowing(currentUserFollowing.filter(item => item !== uid));
     setFollowers(followers.filter(item => item == uid));
   }
 
   function changeDisplay(disp) {
     setDisplay(disp);
-    console.log(currentUserFollowing)
   }
 
   return (
@@ -189,7 +187,7 @@ function ProfilePage() {
         </AccountInfoContainer>
         {
           display === 'gallery' ?
-            <Gallery images={images} username={username} />
+            <Gallery images={images} username={username} uid={uid} />
           :
           display === 'followers' ?
             <ProfileFollowers followers={followers} />

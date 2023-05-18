@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import  { ReactComponent as LikeIcon } from '../icons/LikeIcon.svg'
+import Likes from './Likes';
 import { storage, ref, getDownloadURL } from '../firebase';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -27,22 +27,13 @@ const ImageOverlay = styled.div`
   height: 100%;
   color: white;
   font-weight: bold;
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   background-color: rgba(0, 0, 0, 0.4);
   transition: opacity .25s;
   transition-timing-function: ease-in-out;
 
   &:hover {
     opacity: 1;
-  }
-`;
-
-const StyledLikeIcon = styled(LikeIcon)`
-  transition: fill .5s;
-
-  &:hover {
-    fill: red;
-    cursor: pointer;
   }
 `;
 
@@ -67,13 +58,7 @@ function GalleryImageContainer(props) {
     <ImageContainer>
       <Image src={imageURL} />
       <ImageOverlay >
-        <StyledLikeIcon />
-        {
-          props.image.likes ?
-            props.image.likes.length
-          :
-            0
-        }
+        <Likes likes={props.image.likes} uid={props.uid} docID={props.image.docID} />
       </ImageOverlay>
     </ImageContainer>
   )
