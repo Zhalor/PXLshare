@@ -3,6 +3,7 @@ import ContentCard from './ContentCard';
 import { db, collection, doc, getDocs, getDoc, setDoc, getAuth, storage, ref, getDownloadURL } from '../firebase';
 import { useEffect, useContext, useState } from 'react';
 import { UserContext } from '../RouteSwitch';
+import { useFollowing } from '../hooks/useFollowing';
 
 const ContentContainer = styled.div`
   width: 500px;
@@ -12,47 +13,46 @@ const ContentContainer = styled.div`
 function Content() {
 
   const user = useContext(UserContext);
-  const [following, setFollowing] = useState([]);
+  const [following] = useFollowing(user.uid);
   const [folowingImages, setFollowingImages] = useState([]);
-  
-  useEffect(() => {
-    getFollowing();
-  }, [])
 
   useEffect(() => {
-    getFollowingImages();
+    if(following) {
+      getFollowingImages();
+    }
   }, [following]);
 
-  async function getFollowing() {
-    try {
-      const auth = getAuth();
-      const followingList = await getDocs(collection(db, user.displayName, 'Following', 'Usernames'));
-      const arr = [];
+  // async function getFollowing() {
+  //   try {
+  //     const auth = getAuth();
+  //     const followingList = await getDocs(collection(db, user.displayName, 'Following', 'Usernames'));
+  //     const arr = [];
 
-      followingList.docs.forEach(user => {
-        const obj = user.data()
-        arr.push(obj.username);
-      });
+  //     followingList.docs.forEach(user => {
+  //       const obj = user.data()
+  //       arr.push(obj.username);
+  //     });
 
-      setFollowing(arr);
-      console.log(following);
-    } catch(error) {
-      console.log(error)
-    }
-  }
+  //     setFollowing(arr);
+  //     console.log(following);
+  //   } catch(error) {
+  //     console.log(error)
+  //   }
+  // }
 
   async function getFollowingImages() {
     const arr = [];
-    let obj = {}
-    for(let user of following) {
-      const uploadFileNames = await getDoc(doc(db, user, 'Uploads'));
-      obj = uploadFileNames.data();
-      
+    let filenames = {};
+    for(let userID of following) {
+      const uploadFileNames = await getDoc(doc(db, 'users', userID, 'Uploads', 'filenames'));
+      console.log(userID)
+      const data = uploadFileNames.data();
+      filenames = data.filenames;
     }
-    for(const [url, name] of Object.entries(obj.filenames)) {
+    console.log(filenames, arr)
+    for(const [url, name] of Object.entries(filenames)) {
       arr.push({[url]: name});
     }
-    console.log(arr)
     setFollowingImages(arr);
   }
 
@@ -76,7 +76,7 @@ function Content() {
 
   return (
    <ContentContainer>
-    <div onClick={getFollowing}>
+    <div onClick={getFollowingImages}>
       hi
     </div>
     {folowingImages.map(upload => {

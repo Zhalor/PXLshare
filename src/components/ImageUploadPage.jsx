@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext,useCallback } from 'react';
 import styled from 'styled-components';
 import { storage, ref, uploadBytes, getDownloadURL, deleteObject } from '../firebase';
-import { getAuth, db, doc, getDoc, setDoc, updateDoc } from '../firebase';
+import { db, doc, getDoc, setDoc, updateDoc, addDoc, collection, deleteDoc } from '../firebase';
 import Cropper from 'react-easy-crop';
 import { UserContext } from '../RouteSwitch';
 import Header from './Header';
@@ -20,6 +20,7 @@ function ImageUploadPage() {
   const [zoom, setZoom] = useState(1);
   const [file, setFile] = useState('');
   const [imageURL, setImageURL] = useState('');
+  const [imageDocID, setImageDocID] = useState('');
 
    const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     console.log(croppedArea);
@@ -33,9 +34,22 @@ function ImageUploadPage() {
   async function handleFileChange() {
     if(file) {
       try {
-        const storageURL = `${user.uid}/uploads/${file.name}`;
+        const storageURL = `${user.uid}/Uploads/${file.name}`;
         const storageRef = ref(storage, storageURL);
         const uploadedFile = await uploadBytes(storageRef, file);
+
+        const docRef = await addDoc(collection(db, 'users', user.uid, 'Uploads'), {
+          dateUploaded: new Date(),
+          desc: 'An Upload',
+          filename: file.name,
+          likes: [],
+          url: storageURL
+        });
+
+        await updateDoc(doc(db, 'users', user.uid, 'Uploads', docRef.id), {
+          docID: docRef.id,
+        });
+        setImageDocID(docRef.id);
         console.log('File has been uploaded', uploadedFile);
 
         const url = await getDownloadURL(storageRef);
@@ -48,9 +62,11 @@ function ImageUploadPage() {
 
   async function back() {
     try {
-      const storageURL = `${user.uid}/uploads/${file.name}`;
+      const storageURL = `${user.uid}/Uploads/${file.name}`;
       const storageRef = ref(storage, storageURL);
       await deleteObject(storageRef);
+
+      await deleteDoc(doc(db, 'users', user.uid, 'Uploads', imageDocID));
     } catch(error) {
       console.log(error);
     }

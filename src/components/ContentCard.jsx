@@ -78,8 +78,12 @@ function ContentCard(props) {
       console.log(path);
       setImageURL(path);
     } catch(error) {
-      
+      console.log(error);
     }
+  }
+
+  async function getUser() {
+    
   }
 
   useEffect(() => {
