@@ -3,7 +3,7 @@ import  { ReactComponent as Like } from '../icons/Like.svg'
 import  { ReactComponent as Liked } from '../icons/Liked.svg'
 import { useState,useContext } from "react";
 import { UserContext } from "../RouteSwitch";
-import { db, arrayRemove, arrayUnion, updateDoc, collection, query, where, getDocs, doc } from '../firebase';
+import { db, arrayRemove, arrayUnion, updateDoc, doc } from '../firebase';
 
 const StyledLike = styled(Like)`
   transition: fill .5s;
@@ -27,15 +27,15 @@ function Likes(props) {
   async function toggleLike(isLiked) {
     if(isLiked) {
       await updateDoc(doc(db, 'users', props.uid, 'Uploads', props.docID), {
-        likes: arrayRemove(props.uid)
+        likes: arrayRemove(user.uid)
       });
-      setLikes(likes.filter(item => item !== props.uid));
+      setLikes(likes.filter(item => item !== user.uid));
       
     } else {
       await updateDoc(doc(db, 'users', props.uid, 'Uploads', props.docID), {
-        likes: arrayUnion(props.uid)
+        likes: arrayUnion(user.uid)
       });
-      setLikes([...likes, props.uid]);
+      setLikes([...likes, user.uid]);
     }
   }
 
@@ -47,13 +47,6 @@ function Likes(props) {
         :
           <StyledLike onClick={() => toggleLike(false)} />
       }
-      {
-        likes ?
-          likes.length
-        :
-          0
-      }
-      
     </>
   )
 }

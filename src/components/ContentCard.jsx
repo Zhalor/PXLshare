@@ -2,9 +2,11 @@ import styled from 'styled-components';
 import TestImage from '../cog-outline.png';
 import  { ReactComponent as Like } from '../icons/Like.svg'
 import CommentIcon from '../icons/CommentIcon';
-import { getAuth, storage, getDownloadURL, ref } from '../firebase';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { storage, getDownloadURL, ref, db, updateDoc, arrayUnion, arrayRemove, doc, getDoc} from '../firebase';
+import { useState, useEffect, useContext } from 'react';
+import Likes from './Likes';
+import { UserContext } from '../RouteSwitch';
+import Comments from './Comments';
 
 const StyledContentCard = styled.div`
   display: flex;
@@ -40,16 +42,7 @@ const PostImage = styled.img`
   margin-bottom: 8px;
 `;
 
-const StyledLikeIcon = styled(Like)`
-  transition: fill .5s;
-
-  &:hover {
-    fill: red;
-    cursor: pointer;
-  }
-`;
-
-const CommentContainer = styled.div`
+const CommentField = styled.div`
   display: flex;
   border-top: 1px solid rgba(114, 114, 114, 0.2);
 `;
@@ -68,46 +61,52 @@ const PostBtn = styled.button`
 
 function ContentCard(props) {
 
-  const auth = getAuth();
-  const [username, setUsername] = useState(Object.values(props.upload));
-  const [imageURL, setImageURL] = useState();
+  const user = useContext(UserContext);
+  const [image, setImage] = useState();
+  const [comment, setComment] = useState('');
 
-  async function getImageURL() {
+  async function getImage() {
     try {
-      const path = await getDownloadURL(ref(storage, `${username}/uploads/${Object.keys(props.upload)}`));
-      console.log(path);
-      setImageURL(path);
+      const path = await getDownloadURL(ref(storage, props.upload.url));
+      setImage(path);
     } catch(error) {
       console.log(error);
     }
   }
 
-  async function getUser() {
-    
+  async function addComment() {
+    await updateDoc(doc(db, 'users', props.upload.uid, 'Uploads', props.upload.docID), {
+      comments: arrayUnion({
+        uid: user.uid,
+        comment: comment,
+        username: user.displayName
+      })
+    });
+    setComment('');
   }
 
   useEffect(() => {
-    getImageURL();
+    getImage();
   }, []);
 
   return (
    <StyledContentCard>
     <Container>
       <StyledImage src={TestImage} alt="" />
-      <h2 onClick={getImageURL} >{username}</h2>
+      <h2 onClick={getImage} >{props.upload.username}</h2>
     </Container>
-    <PostImage src={imageURL} alt="" />
+    <PostImage src={image} alt="" />
     <Container>
-      <StyledLikeIcon />
+      <Likes likes={props.upload.likes} uid={props.upload.uid} docID={props.upload.docID} />
       <CommentIcon />
     </Container>
-    <p>0 likes</p>
-    <h2>{username}</h2>
-    <p>2 days ago</p>
-    <CommentContainer>
-      <CommentInput type="text" placeholder='Add a comment...' />
-      <PostBtn type='button'>Post</PostBtn>
-    </CommentContainer>
+    <p>{props.upload.likes.length} {props.upload.likes.length == 1 ? 'Like' : 'Likes '}</p>
+    <Comments upload={props.upload} />
+    <p>Posted 2 days ago</p>
+    <CommentField>
+      <CommentInput type="text" placeholder='Add a comment...' onChange={(e) => setComment(e.target.value)} value={comment} />
+      <PostBtn type='button' onClick={addComment}>Post</PostBtn>
+    </CommentField>
    </StyledContentCard>
   )
 }

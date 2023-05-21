@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import ContentCard from './ContentCard';
-import { db, collection, doc, getDocs, getDoc, setDoc, getAuth, storage, ref, getDownloadURL } from '../firebase';
+import { db, collection, doc, getDocs, getDoc, setDoc, getAuth, storage, ref, getDownloadURL, query, where } from '../firebase';
 import { useEffect, useContext, useState } from 'react';
 import { UserContext } from '../RouteSwitch';
 import { useFollowing } from '../hooks/useFollowing';
@@ -42,18 +42,26 @@ function Content() {
 
   async function getFollowingImages() {
     const arr = [];
-    let filenames = {};
     for(let userID of following) {
-      const uploadFileNames = await getDoc(doc(db, 'users', userID, 'Uploads', 'filenames'));
-      console.log(userID)
-      const data = uploadFileNames.data();
-      filenames = data.filenames;
-    }
-    console.log(filenames, arr)
-    for(const [url, name] of Object.entries(filenames)) {
-      arr.push({[url]: name});
+      const uploads = await getDocs(collection(db, 'users', userID, 'Uploads'));
+      uploads.docs.forEach(upload => {
+        arr.push(upload.data());
+      });
     }
     setFollowingImages(arr);
+    // const arr = [];
+    // let filenames = {};
+    // for(let userID of following) {
+    //   const uploadFileNames = await getDoc(doc(db, 'users', userID, 'Uploads', 'filenames'));
+    //   console.log(userID)
+    //   const data = uploadFileNames.data();
+    //   filenames = data.filenames;
+    // }
+    // console.log(filenames, arr)
+    // for(const [url, name] of Object.entries(filenames)) {
+    //   arr.push({[url]: name});
+    // }
+    // setFollowingImages(arr);
   }
 
 

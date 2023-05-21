@@ -43,7 +43,10 @@ function ImageUploadPage() {
           desc: 'An Upload',
           filename: file.name,
           likes: [],
-          url: storageURL
+          url: storageURL,
+          uid: user.uid,
+          username: user.displayName,
+          comments: []
         });
 
         await updateDoc(doc(db, 'users', user.uid, 'Uploads', docRef.id), {
@@ -54,6 +57,7 @@ function ImageUploadPage() {
 
         const url = await getDownloadURL(storageRef);
         setImageURL(url);
+
       } catch(error) {
         console.log(error)
       }

@@ -59,6 +59,12 @@ function GalleryImageContainer(props) {
       <Image src={imageURL} />
       <ImageOverlay >
         <Likes likes={props.image.likes} uid={props.uid} docID={props.image.docID} />
+        {
+        props.images.likes ?
+          props.images.likes.length
+        :
+          0
+      }
       </ImageOverlay>
     </ImageContainer>
   )
