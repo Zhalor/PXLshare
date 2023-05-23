@@ -7,6 +7,7 @@ import { useState, useEffect, useContext } from 'react';
 import Likes from './Likes';
 import { UserContext } from '../RouteSwitch';
 import Comments from './Comments';
+import CommentSection from './CommentSection';
 
 const StyledContentCard = styled.div`
   display: flex;
@@ -42,28 +43,9 @@ const PostImage = styled.img`
   margin-bottom: 8px;
 `;
 
-const CommentField = styled.div`
-  display: flex;
-  border-top: 1px solid rgba(114, 114, 114, 0.2);
-`;
-
-const CommentInput = styled.input`
-  border: none;
-  padding: 20px;
-  flex: 1;
-`;
-
-const PostBtn = styled.button`
-  background: white;
-  border: none;
-  padding: 20px;
-`;
-
 function ContentCard(props) {
 
-  const user = useContext(UserContext);
   const [image, setImage] = useState();
-  const [comment, setComment] = useState('');
 
   async function getImage() {
     try {
@@ -74,39 +56,31 @@ function ContentCard(props) {
     }
   }
 
-  async function addComment() {
-    await updateDoc(doc(db, 'users', props.upload.uid, 'Uploads', props.upload.docID), {
-      comments: arrayUnion({
-        uid: user.uid,
-        comment: comment,
-        username: user.displayName
-      })
-    });
-    setComment('');
-  }
-
   useEffect(() => {
     getImage();
   }, []);
 
   return (
    <StyledContentCard>
+
     <Container>
       <StyledImage src={TestImage} alt="" />
       <h2 onClick={getImage} >{props.upload.username}</h2>
     </Container>
+
     <PostImage src={image} alt="" />
+
     <Container>
       <Likes likes={props.upload.likes} uid={props.upload.uid} docID={props.upload.docID} />
       <CommentIcon />
     </Container>
+
     <p>{props.upload.likes.length} {props.upload.likes.length == 1 ? 'Like' : 'Likes '}</p>
-    <Comments upload={props.upload} />
+
     <p>Posted 2 days ago</p>
-    <CommentField>
-      <CommentInput type="text" placeholder='Add a comment...' onChange={(e) => setComment(e.target.value)} value={comment} />
-      <PostBtn type='button' onClick={addComment}>Post</PostBtn>
-    </CommentField>
+
+    <CommentSection upload={props.upload}/>
+
    </StyledContentCard>
   )
 }

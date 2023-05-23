@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { db, doc, getDoc } from "../firebase";
+import { useState, useEffect, useContext } from "react";
+import { db, doc, arrayRemove, updateDoc } from "../firebase";
 import styled from "styled-components";
+import { UserContext } from "../RouteSwitch";
 
 const StyledComment = styled.div`
   display: flex;
@@ -24,10 +25,23 @@ const DeleteBtn = styled.button`
 
 function Comment(props) {
 
+  const user = useContext(UserContext);
+
+  async function deleteComment() {
+    await updateDoc(doc(db, 'users', props.upload.uid, 'Uploads', props.upload.docID), {
+      comments: arrayRemove({
+        uid: user.uid,
+        comment: props.comment.comment,
+        username: user.displayName
+      })
+    });
+    props.setComments(props.comments.filter(item => item !== props.comment));
+  }
+
   return (
     <StyledComment>
       <p><Username>{props.comment.username}</Username>: {props.comment.comment}</p>
-      <DeleteBtn>X</DeleteBtn>
+      <DeleteBtn onClick={deleteComment}>X</DeleteBtn>
     </StyledComment>
   )
 }
