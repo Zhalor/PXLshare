@@ -5,12 +5,17 @@ import { db, doc, getDoc, setDoc, updateDoc, addDoc, collection, deleteDoc } fro
 import Cropper from 'react-easy-crop';
 import { UserContext } from '../RouteSwitch';
 import Header from './Header';
+import getCroppedImg from '../cropImage';
 
 const CropperWrapper = styled.div`
   position: relative;
   margin: 50px auto;
-  width: 900px;
+  width: 700px;
   height: 600px;
+`;
+
+const Test = styled.img`
+  width: 500px;
 `;
 
 function ImageUploadPage() {
@@ -18,14 +23,34 @@ function ImageUploadPage() {
   const user = useContext(UserContext);
   const [crop, setCrop] = useState({x: 0, y: 0});
   const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
+  const [croppedImage, setCroppedImage] = useState(null)
   const [file, setFile] = useState('');
   const [imageURL, setImageURL] = useState('');
   const [imageDocID, setImageDocID] = useState('');
 
    const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
-    console.log(croppedArea);
-    console.log(croppedAreaPixels);
-  }, [])
+    setCroppedAreaPixels(croppedAreaPixels)
+    console.log(croppedAreaPixels)
+    console.log(croppedArea)
+  }, []);
+
+  const showCroppedImage = useCallback(async () => {
+    try {
+      const croppedImage = await getCroppedImg(
+        imageURL,
+        croppedAreaPixels
+      )
+      console.log('donee', { croppedImage })
+      setCroppedImage(croppedImage)
+    } catch (e) {
+      console.error(e)
+    }
+  }, [croppedAreaPixels]);
+
+  const onClose = useCallback(() => {
+    setCroppedImage(null)
+  }, []);
 
   useEffect(() => {
     handleFileChange();
@@ -112,7 +137,7 @@ function ImageUploadPage() {
 
   async function getUserInfo() {
     console.log(user);
-    console.log(crop);
+    console.log(file);
   }
 
   return (
@@ -124,7 +149,7 @@ function ImageUploadPage() {
             image={imageURL}
             crop={crop}
             zoom={zoom}
-            aspect={4 / 3}
+            cropSize={{width: 500, height: 500}}
             onCropChange={setCrop}
             onZoomChange={setZoom}
             onCropComplete={onCropComplete} 
@@ -139,6 +164,9 @@ function ImageUploadPage() {
         <button type='button' onClick={getUserInfo}>Get user info</button>
         <button onClick={back}>back</button>
         <input type="range" defaultValue={1} min={1} max={3} step={.1} onChange={(e) => setZoom(e.target.value)} />
+        <button onClick={showCroppedImage}>Show Cropped Image</button>
+        {croppedImage ? <Test src={croppedImage} /> : null}
+        
     </div>
   )
 }

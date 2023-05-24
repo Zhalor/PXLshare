@@ -47,6 +47,12 @@ function Likes(props) {
         :
           <StyledLike onClick={() => toggleLike(false)} />
       }
+      {
+        likes ?
+          likes.length
+        :
+          0
+      }
     </>
   )
 }

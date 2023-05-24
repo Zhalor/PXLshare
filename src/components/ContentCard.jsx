@@ -1,12 +1,9 @@
 import styled from 'styled-components';
 import TestImage from '../cog-outline.png';
-import  { ReactComponent as Like } from '../icons/Like.svg'
 import CommentIcon from '../icons/CommentIcon';
-import { storage, getDownloadURL, ref, db, updateDoc, arrayUnion, arrayRemove, doc, getDoc} from '../firebase';
-import { useState, useEffect, useContext } from 'react';
+import { storage, getDownloadURL, ref} from '../firebase';
+import { useState, useEffect } from 'react';
 import Likes from './Likes';
-import { UserContext } from '../RouteSwitch';
-import Comments from './Comments';
 import CommentSection from './CommentSection';
 
 const StyledContentCard = styled.div`
@@ -37,7 +34,7 @@ const StyledImage = styled.img`
 `;
 
 const PostImage = styled.img`
-  width: 100%;
+  width: 500px;
   border-top: 1px solid rgba(114, 114, 114, 0.2);
   border-bottom: 1px solid rgba(114, 114, 114, 0.2);
   margin-bottom: 8px;

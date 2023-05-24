@@ -17,6 +17,7 @@ const HeaderContainer = styled.header`
   padding: 20px;
   margin-bottom: 20px;
   border-bottom: 1px solid rgba(114, 114, 114, 0.2);
+  z-index: 1;
 `;
 
 const HeaderContent = styled.div`
