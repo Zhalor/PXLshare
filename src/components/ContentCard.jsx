@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import TestImage from '../cog-outline.png';
 import CommentIcon from '../icons/CommentIcon';
-import { storage, getDownloadURL, ref} from '../firebase';
-import { useState, useEffect } from 'react';
+import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, getDownloadURL, ref} from '../firebase';
+import { useState, useEffect, useContext } from 'react';
 import Likes from './Likes';
 import CommentSection from './CommentSection';
+import { UserContext } from '../RouteSwitch';
 
 const StyledContentCard = styled.div`
   display: flex;
@@ -42,14 +43,32 @@ const PostImage = styled.img`
 
 function ContentCard(props) {
 
+  const user = useContext(UserContext);
   const [image, setImage] = useState();
+  const [likes, setLikes] = useState(props.upload.likes);
 
   async function getImage() {
+
     try {
       const path = await getDownloadURL(ref(storage, props.upload.url));
       setImage(path);
     } catch(error) {
       console.log(error);
+    }
+  }
+
+  async function toggleLike(isLiked) {
+    if(isLiked) {
+      await updateDoc(doc(db, 'users', props.upload.uid, 'Uploads', props.upload.docID), {
+        likes: arrayRemove(user.uid)
+      });
+      setLikes(likes.filter(item => item !== user.uid));
+      
+    } else {
+      await updateDoc(doc(db, 'users', props.upload.uid, 'Uploads', props.upload.docID), {
+        likes: arrayUnion(user.uid)
+      });
+      setLikes([...likes, user.uid]);
     }
   }
 
@@ -68,11 +87,11 @@ function ContentCard(props) {
     <PostImage src={image} alt="" />
 
     <Container>
-      <Likes likes={props.upload.likes} uid={props.upload.uid} docID={props.upload.docID} />
+      <Likes likes={likes} uid={props.upload.uid} docID={props.upload.docID} toggleLike={toggleLike} />
       <CommentIcon />
     </Container>
 
-    <p>{props.upload.likes.length} {props.upload.likes.length == 1 ? 'Like' : 'Likes '}</p>
+    <p>{likes.length} {likes.length == 1 ? 'Like' : 'Likes '}</p>
 
     <p>Posted 2 days ago</p>
 

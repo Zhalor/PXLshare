@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import { UserContext } from '../RouteSwitch';
-import UploadIcon from '../icons/UploadIcon';
+import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
 import AccountIcon from '../icons/AccountIcon';
 import HomeIcon from '../icons/HomeIcon';
 

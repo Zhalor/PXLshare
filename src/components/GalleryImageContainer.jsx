@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import Likes from './Likes';
-import { storage, ref, getDownloadURL } from '../firebase';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, ref, getDownloadURL } from '../firebase';
+import { useState, useEffect,useContext} from 'react';
+import { UserContext } from '../RouteSwitch';
 
 const ImageContainer = styled.div`
   position: relative;
@@ -43,14 +43,32 @@ function GalleryImageContainer(props) {
     getImageURL();
   }, []);
 
+  const user = useContext(UserContext);
   const [imageURL, setImageURL] = useState('');
+  const [likes, setLikes] = useState(props.image.likes);
 
   async function getImageURL() {
     try {
       const path = await getDownloadURL(ref(storage, props.image.url));
+      console.log(path)
       setImageURL(path);
     } catch(error) {
       console.log(error);
+    }
+  }
+
+  async function toggleLike(isLiked) {
+    if(isLiked) {
+      await updateDoc(doc(db, 'users', props.uid, 'Uploads', props.image.docID), {
+        likes: arrayRemove(user.uid)
+      });
+      setLikes(likes.filter(item => item !== user.uid));
+      
+    } else {
+      await updateDoc(doc(db, 'users', props.uid, 'Uploads', props.image.docID), {
+        likes: arrayUnion(user.uid)
+      });
+      setLikes([...likes, user.uid]);
     }
   }
 
@@ -58,7 +76,13 @@ function GalleryImageContainer(props) {
     <ImageContainer>
       <Image src={imageURL} />
       <ImageOverlay >
-        <Likes likes={props.image.likes} uid={props.uid} docID={props.image.docID} />
+        <Likes likes={likes} uid={props.uid} docID={props.image.docID} toggleLike={toggleLike} />
+        {
+          likes ?
+            likes.length
+          :
+            0
+        }
       </ImageOverlay>
     </ImageContainer>
   )

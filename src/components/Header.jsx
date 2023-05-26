@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import UploadIcon from '../icons/UploadIcon';
+import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
 import AccountIcon from '../icons/AccountIcon';
 import LogoutIcon from '../icons/LogoutIcon';
 import HomeIcon from '../icons/HomeIcon';
