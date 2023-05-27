@@ -15,7 +15,7 @@ const StyledFooter = styled.div`
   background-color: white;
 `;
 
-function Footer() {
+function Footer(props) {
 
   const user = useContext(UserContext);
   const [width, setWidth] = useState(window.innerWidth)

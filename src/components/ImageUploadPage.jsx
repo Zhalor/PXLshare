@@ -8,37 +8,70 @@ import Header from './Header';
 import getCroppedImg from '../cropImage';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
 
+const Container = styled.div`
+  width: fit-content;
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+  margin: 50px auto 0px auto;
+  padding: 20px;
+  background-color: white;
+
+  > div {
+    display: flex;
+    text-align: center;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 0px 10px;
+  }
+
+  > p {
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  > div > input {
+    width: 300px;
+  }
+`;
+
 const CropperWrapper = styled.div`
   position: relative;
-  margin: 50px auto;
-  padding: 20px;
   width: 700px;
   height: 600px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
 `;
 
 const UploadBtn = styled.input`
-  display: block;
-  margin: 150px auto;
-  padding: 12px;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
-  border: none;
+  display: none;
+`;
+
+const StyledBtn = styled.button`
+  background-color: rgb(0,92,152);
+  border: 1px solid rgb(0, 65, 109);
+  color: white;
+  border-radius: 5px;
+  padding: 6px 12px;
+  font-weight: bold;
+  font-size: 0.9rem;
 
   &:hover {
-    cursor: pointer;
+    background-color: rgb(0, 107, 179)
   }
 `;
 
 const StyledUploadIcon = styled(UploadIcon)`
   width: 300px;
   height: 300px;
+  margin: 0px 50px 10px 50px;
+  display: block;
+
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
-const Test = styled.img`
+const StyledCroppedImage = styled.img`
   width: 500px;
-  display: block;
-  margin: 100px auto;
-  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
 `;
 
 function ImageUploadPage() {
@@ -51,8 +84,33 @@ function ImageUploadPage() {
   const [file, setFile] = useState('');
   const [localFile, setLocalFile] = useState('');
   const [stage, setStage] = useState('choose');
-  const [imageURL, setImageURL] = useState('');
-  const [imageDocID, setImageDocID] = useState('');
+  const [desc, setDesc] = useState('');
+
+  useEffect(() => {
+    handleFileChange();
+  }, [file]);
+
+  useEffect(() => {
+    const zoomSlider = document.querySelector('input[type=range]');
+    if(zoomSlider) {
+      zoomSlider.value = zoom;
+    }
+  }, [zoom]);
+
+  async function handleFileChange() {
+    if(file) {
+      let reader = new FileReader();
+      reader.readAsDataURL(file);
+      setStage('crop');
+      reader.onload = function() {
+        setLocalFile(reader.result);
+      }
+
+      reader.onerror = function() {
+        console.log(reader.error)
+      }
+    }
+  }
 
    const onCropComplete = useCallback((croppedArea, croppedAreaPixels) => {
     setCroppedAreaPixels(croppedAreaPixels)
@@ -73,27 +131,13 @@ function ImageUploadPage() {
   }, [croppedAreaPixels]);
 
   const onClose = useCallback(() => {
-    setCroppedImage(null)
+    setCroppedImage(null);
+    setFile('');
+    setLocalFile('');
+    setStage('choose');
+    setZoom(1);
+    setCrop({x: 0, y: 0});
   }, []);
-
-  useEffect(() => {
-    handleFileChange();
-  }, [file]);
-
-  async function handleFileChange() {
-    if(file) {
-      let reader = new FileReader();
-      reader.readAsDataURL(file);
-      setStage('crop');
-      reader.onload = function() {
-        setLocalFile(reader.result);
-      }
-
-      reader.onerror = function() {
-        console.log(reader.error)
-      }
-    }
-  }
 
   async function uploadFile() {
     try {
@@ -107,7 +151,7 @@ function ImageUploadPage() {
 
       const docRef = await addDoc(collection(db, 'users', user.uid, 'Uploads'), {
         dateUploaded: new Date(),
-        desc: 'An Upload',
+        desc: desc,
         filename: file.name,
         likes: [],
         url: storageURL,
@@ -126,50 +170,50 @@ function ImageUploadPage() {
     }
   }
 
-  async function back() {
-    setFile('');
-    setCroppedImage('');
-    setLocalFile('');
-    setStage('choose');
-  }
-
-  async function getUserInfo() {
-    console.log(user);
-    console.log(file);
-    console.log(croppedImage)
-  }
-
   return (
     <div>
       <Header user={user} />   
       {stage === 'choose' ? 
-        <div>
-          <UploadBtn type='file' accept='image/*' id='fileInput' onChange={(e) => setFile(e.target.files[0])} />
-        </div>
+        <Container>
+          <label>
+            <UploadBtn type='file' accept='image/*' id='fileInput' onChange={(e) => setFile(e.target.files[0])} />
+            <StyledUploadIcon />
+          </label>
+          <p>Select an image to upload</p>
+        </Container>
         :
         stage === 'crop' ?
-        <CropperWrapper>
-          <Cropper
-            image={localFile}
-            crop={crop}
-            zoom={zoom}
-            cropSize={{width: 500, height: 500}}
-            onCropChange={setCrop}
-            onZoomChange={setZoom}
-            onCropComplete={onCropComplete} 
-          />
-        </CropperWrapper>
+        <Container>
+          <CropperWrapper>
+            <Cropper
+              image={localFile}
+              crop={crop}
+              zoom={zoom}
+              cropSize={{width: 500, height: 500}}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={onCropComplete} 
+            />
+          </CropperWrapper>
+          <div>
+            <StyledBtn onClick={onClose}>Cancel</StyledBtn>
+            <input type="range" defaultValue={1} min={1} max={3} step={.1} onChange={(e) => setZoom(e.target.value)} />
+            <StyledBtn onClick={showCroppedImage}>Crop</StyledBtn>
+          </div>
+        </Container>
         :
         stage === 'upload' ?
-          <Test src={croppedImage} />
+          <Container>
+            <StyledCroppedImage src={croppedImage} />
+            <div>
+              <StyledBtn onClick={onClose}>Cancel</StyledBtn>
+              <textarea name="" id="" cols="30" rows="5" placeholder='Enter a caption...' onChange={(e) => setDesc(e.target.value)}></textarea>
+              <StyledBtn type='button' onClick={uploadFile}>Upload</StyledBtn>
+            </div>
+          </Container>
         :
         null
         }
-        <button type='button' onClick={uploadFile}>Upload</button>
-        <button type='button' onClick={getUserInfo}>Get user info</button>
-        <button onClick={back}>back</button>
-        <input type="range" defaultValue={1} min={1} max={3} step={.1} onChange={(e) => setZoom(e.target.value)} />
-        <button onClick={showCroppedImage}>Show Cropped Image</button>
     </div>
   )
 }
