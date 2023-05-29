@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import Likes from './Likes';
+import LikesBtn from './LikesBtn';
 import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, ref, getDownloadURL } from '../firebase';
 import { useState, useEffect,useContext} from 'react';
 import { UserContext } from '../RouteSwitch';
@@ -76,7 +76,7 @@ function GalleryImageContainer(props) {
     <ImageContainer>
       <Image src={imageURL} />
       <ImageOverlay >
-        <Likes likes={likes} uid={props.uid} docID={props.image.docID} toggleLike={toggleLike} />
+        <LikesBtn likes={likes} uid={props.uid} docID={props.image.docID} toggleLike={toggleLike} />
         {
           likes ?
             likes.length

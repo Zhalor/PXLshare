@@ -49,7 +49,7 @@ const StyledInput = styled.input`
   outline: none;
 `;
 
-const LoginButton = styled.button`
+const SignUpBtn = styled.button`
   padding: 10px;
   color: white;
   background-color: #62b1e6;
@@ -57,6 +57,14 @@ const LoginButton = styled.button`
   font-size: 1rem;
   font-weight: bold;
   border-radius: 4px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:active {
+    transform: scale(.99);
+  }
 `;
 
 const SignUpText = styled.p`
@@ -78,42 +86,46 @@ function SignUpPage() {
 
   let navigate = useNavigate();
 
-  async function createAccount() {
-    const auth = getAuth();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const username = document.getElementById('username').value;
-
-      const userCreds = await createUserWithEmailAndPassword(auth, email, password);
-      const updatedProfile = await updateProfile(auth.currentUser, {
-        displayName: username,
-        photoURL: 'default/default-profile-picture.png',
-      });
-      await setDoc(doc(db, 'users', auth.currentUser.uid), {
-        bio: '',
-        followers: [],
-        following: [],
-        profilePictureURL: auth.currentUser.photoURL,
-        username: auth.currentUser.displayName,
-        uid: auth.currentUser.uid,
-      });
-      console.log(userCreds);
-      console.log(updatedProfile);
-      navigate('/');
-   
+  async function createAccount(e) {
+    e.preventDefault();
+    try {
+      const auth = getAuth();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const username = document.getElementById('username').value;
+  
+        const userCreds = await createUserWithEmailAndPassword(auth, email, password);
+        const updatedProfile = await updateProfile(auth.currentUser, {
+          displayName: username,
+          photoURL: 'default/default-profile-picture.png',
+        });
+        await setDoc(doc(db, 'users', auth.currentUser.uid), {
+          bio: '',
+          followers: [],
+          following: [],
+          profilePictureURL: auth.currentUser.photoURL,
+          username: auth.currentUser.displayName,
+          uid: auth.currentUser.uid,
+        });
+        console.log(userCreds);
+        console.log(updatedProfile);
+        navigate('/');
+    } catch(error) {
+      console.log(error);
+    }
   }
 
   return (
     <Container>
       <LoginImage src={Image} alt="" />
       <LoginContainer>
-        <FormContainer>
+        <FormContainer onSubmit={(e) => createAccount(e)}>
           <StyledLogo>PXLshare</StyledLogo>
           <StyledInput type="text" placeholder='Username' id='username' required />
           <StyledInput type="email" placeholder='Email Address' id='email' required />
           <StyledInput type="password" placeholder='Password' id='password' required />
           <StyledInput type="password" placeholder='Confirm Password' id='confirm-password' required />
-          <LoginButton type='button' onClick={createAccount}>Create Account</LoginButton>
+          <SignUpBtn type='submit'>Create Account</SignUpBtn>
         </FormContainer>
         <SignUpText>Already have an account? <StyledLink to={'/login'}>Login</StyledLink></SignUpText>
       </LoginContainer>

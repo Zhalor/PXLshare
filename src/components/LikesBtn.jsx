@@ -19,25 +19,9 @@ const StyledLiked = styled(Liked)`
   cursor: pointer;
 `;
 
-function Likes(props) {
+function LikesBtn(props) {
 
   const user = useContext(UserContext);
-  // const [likes, setLikes] = useState(props.likes);
-
-  // async function toggleLike(isLiked) {
-  //   if(isLiked) {
-  //     await updateDoc(doc(db, 'users', props.uid, 'Uploads', props.docID), {
-  //       likes: arrayRemove(user.uid)
-  //     });
-  //     setLikes(likes.filter(item => item !== user.uid));
-      
-  //   } else {
-  //     await updateDoc(doc(db, 'users', props.uid, 'Uploads', props.docID), {
-  //       likes: arrayUnion(user.uid)
-  //     });
-  //     setLikes([...likes, user.uid]);
-  //   }
-  // }
 
   return (
     <>
@@ -51,4 +35,4 @@ function Likes(props) {
   )
 }
 
-export default Likes;
+export default LikesBtn;

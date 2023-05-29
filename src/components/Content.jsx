@@ -35,9 +35,6 @@ function Content() {
 
   return (
    <ContentContainer>
-    <div onClick={getFollowingImages}>
-      hi
-    </div>
     {folowingImages.map(upload => {
       return <ContentCard upload={upload} />
     })}

@@ -1,9 +1,8 @@
 import styled from 'styled-components';
-import TestImage from '../cog-outline.png';
-import CommentIcon from '../icons/CommentIcon';
-import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, getDownloadURL, ref} from '../firebase';
-import { useState, useEffect, useContext } from 'react';
-import Likes from './Likes';
+import {ReactComponent as CommentIcon} from '../icons/CommentIcon.svg';
+import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, getDownloadURL, ref, getDoc} from '../firebase';
+import { useState, useEffect, useContext, useRef } from 'react';
+import LikesBtn from './LikesBtn';
 import CommentSection from './CommentSection';
 import { UserContext } from '../RouteSwitch';
 
@@ -29,9 +28,10 @@ const Container = styled.div`
   padding: 8px;
 `;
 
-const StyledImage = styled.img`
-  width: 36px;
-  height: 36px;
+const StyledProfilePicture = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 `;
 
 const PostImage = styled.img`
@@ -44,14 +44,31 @@ const PostImage = styled.img`
 function ContentCard(props) {
 
   const user = useContext(UserContext);
+  const inputRef = useRef(null)
   const [image, setImage] = useState();
   const [likes, setLikes] = useState(props.upload.likes);
+  const [profilePicture, setProfilePicture] = useState();
+
+   useEffect(() => {
+    getImage();
+    getPorfilePicture();
+  }, []);
 
   async function getImage() {
-
     try {
-      const path = await getDownloadURL(ref(storage, props.upload.url));
-      setImage(path);
+      const imgPath = await getDownloadURL(ref(storage, props.upload.url));
+      setImage(imgPath);
+    } catch(error) {
+      console.log(error);
+    }
+  }
+
+  async function getPorfilePicture() {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', props.upload.uid));
+      const URL = userDoc.data().profilePictureURL;
+      const profilePicturePath = await getDownloadURL(ref(storage, URL));
+      setProfilePicture(profilePicturePath)
     } catch(error) {
       console.log(error);
     }
@@ -72,31 +89,25 @@ function ContentCard(props) {
     }
   }
 
-  useEffect(() => {
-    getImage();
-  }, []);
+  function handleClick() {
+    inputRef.current.focus();
+  }
 
   return (
    <StyledContentCard>
 
     <Container>
-      <StyledImage src={TestImage} alt="" />
-      <h2 onClick={getImage} >{props.upload.username}</h2>
+      <StyledProfilePicture src={profilePicture} alt="" />
+      <h2>{props.upload.username}</h2>
     </Container>
-
-    <PostImage src={image} alt="" />
-
+    <PostImage src={image} alt={`Image uploaded by ${props.upload.username}`} />
     <Container>
-      <Likes likes={likes} uid={props.upload.uid} docID={props.upload.docID} toggleLike={toggleLike} />
-      <CommentIcon />
+      <LikesBtn likes={likes} uid={props.upload.uid} docID={props.upload.docID} toggleLike={toggleLike} />
+      <CommentIcon onClick={handleClick} />
     </Container>
-
     <p>{likes.length} {likes.length == 1 ? 'Like' : 'Likes '}</p>
-
     <p>Posted 2 days ago</p>
-
-    <CommentSection upload={props.upload}/>
-
+    <CommentSection upload={props.upload} inputRef={inputRef} />
    </StyledContentCard>
   )
 }

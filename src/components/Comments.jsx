@@ -32,23 +32,22 @@ function Comments(props) {
   return (
     <StyledComments>
       { 
-        props.comments &&
-          props.comments.length >= 2 && showComments === false ?
-            <>
-              <Comment comment={props.comments[0]} comments={props.comments} setComments={props.setComments} upload={props.upload} />
-              <Comment comment={props.comments[1]} comments={props.comments} setComments={props.setComments} upload={props.upload} />
-            </>
-          :
-            props.comments &&
-              props.comments.map(comment => {
-                  return <Comment comment={comment} comments={props.comments} setComments={props.setComments} upload={props.upload} />
-                })
+        props.comments.length >= 2 && showComments === false ?
+          <>
+            <Comment comment={props.comments[0]} comments={props.comments} setComments={props.setComments} upload={props.upload} />
+            <Comment comment={props.comments[1]} comments={props.comments} setComments={props.setComments} upload={props.upload} />
+          </>
+        :
+          props.comments.map(comment => {
+              return <Comment comment={comment} comments={props.comments} setComments={props.setComments} upload={props.upload} />
+            })
       }
       {
-        !showComments ?
-          <CommentBtn onClick={() => handleClick(true)}>Show All</CommentBtn>
-        :
-          <CommentBtn onClick={() => handleClick(false)}>Show Less</CommentBtn>
+        props.comments.length > 2 &&
+          (!showComments ?
+            <CommentBtn onClick={() => handleClick(true)}>Show All</CommentBtn>
+          :
+            <CommentBtn onClick={() => handleClick(false)}>Show Less</CommentBtn>)
       }
     </StyledComments>
   )

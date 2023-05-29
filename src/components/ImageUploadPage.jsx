@@ -189,7 +189,7 @@ function ImageUploadPage() {
               image={localFile}
               crop={crop}
               zoom={zoom}
-              cropSize={{width: 500, height: 500}}
+              aspect={4 / 3}
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={onCropComplete} 

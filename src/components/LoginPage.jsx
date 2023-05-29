@@ -51,7 +51,7 @@ const StyledInput = styled.input`
   outline: none;
 `;
 
-const LoginButton = styled.button`
+const LoginBtn = styled.button`
   padding: 10px;
   color: white;
   background-color: #62b1e6;
@@ -59,6 +59,14 @@ const LoginButton = styled.button`
   font-size: 1rem;
   font-weight: bold;
   border-radius: 4px;
+
+  &:hover {
+    cursor: pointer;
+  }
+
+  &:active {
+    transform: scale(.99);
+  }
 `;
 
 const SignUpText = styled.p`
@@ -88,40 +96,43 @@ const GuestButton = styled.button`
 
 function LoginPage() {
 
-  const user = useContext(UserContext);
   let navigate = useNavigate();
 
-  async function login() {
+  async function login(e, justLooking, guestEmail, guestpassword) {
+    e.preventDefault();
     const auth = getAuth();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    try {
-      const userCreds = await signInWithEmailAndPassword(auth, email, password);
-      console.log(userCreds);
-      console.log(userCreds.user);
-      navigate('/');
-    } catch(e) {
-      console.log(e);
+    if(justLooking) {
+      try {
+        await signInWithEmailAndPassword(auth, guestEmail, guestpassword);
+        navigate('/');
+      } catch(e) {
+        console.log(e);
+      }
+    } else {
+      try {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        await signInWithEmailAndPassword(auth, email, password);
+        navigate('/');
+      } catch(e) {
+        console.log(e);
+      }
     }
-  }
-
-  function showUser() {
-    console.log(user);
   }
 
   return (
     <Container>
       <LoginImage src={Image} alt="" />
       <LoginContainer>
-        <FormContainer>
-          <StyledLogo onClick={showUser}>PXLshare</StyledLogo>
-          <StyledInput type="email" placeholder='Email Address' id='email' />
-          <StyledInput type="password" placeholder='Password' id='password' />
-          <LoginButton type='button' onClick={login}>Login</LoginButton>
+        <FormContainer onSubmit={(e) => login(e)}>
+          <StyledLogo>PXLshare</StyledLogo>
+          <StyledInput type="email" placeholder='Email Address' id='email' required />
+          <StyledInput type="password" placeholder='Password' id='password' required />
+          <LoginBtn type='submit'>Login</LoginBtn>
         </FormContainer>
         <SignUpText>Don't have an account? <StyledLink to={'/sign-up'}>Sign Up</StyledLink></SignUpText>
         <p>Wanna look around?</p>
-        <GuestButton>Login as Guest</GuestButton>
+        <GuestButton onClick={(e) => login(e, true, 'guestaccount@gmail.com', '123456')}>Login as Guest</GuestButton>
       </LoginContainer>
     </Container>
     

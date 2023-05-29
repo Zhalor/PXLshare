@@ -18,9 +18,20 @@ const Username = styled.span`
 
 const DeleteBtn = styled.button`
   margin-left: auto;
+  padding: 5px 8px;
   background-color: white;
   border: none;
   color: red;
+  font-weight: bold;
+  font-size: .8rem;
+  text-align: center;
+  border-radius: 6px;
+  transition: all .5s;
+
+  &:hover {
+    background-color: red;
+    color: white;
+  }
 `;
 
 function Comment(props) {
