@@ -41,6 +41,11 @@ const PostImage = styled.img`
   margin-bottom: 8px;
 `;
 
+const Caption = styled.p`
+  font-weight: bold;
+  font-size: 1.1rem;
+`
+
 function ContentCard(props) {
 
   const user = useContext(UserContext);
@@ -105,6 +110,7 @@ function ContentCard(props) {
       <LikesBtn likes={likes} uid={props.upload.uid} docID={props.upload.docID} toggleLike={toggleLike} />
       <CommentIcon onClick={handleClick} />
     </Container>
+    <Caption>{props.upload.desc}</Caption>
     <p>{likes.length} {likes.length == 1 ? 'Like' : 'Likes '}</p>
     <p>Posted 2 days ago</p>
     <CommentSection upload={props.upload} inputRef={inputRef} />

@@ -176,11 +176,15 @@ function ProfilePage() {
               }
             </div>
             <div>
-              <p onClick={() => changeDisplay('gallery')}><span>{images.length}</span> Photos</p>
+              <p onClick={() => changeDisplay('gallery')}>
+                <span>{images.length}</span> Photos
+              </p>
               <p onClick={() => changeDisplay('followers')}>
                 <span>{followers && followers.length}</span> Followers 
               </p>
-              <p onClick={() => changeDisplay('following')}><span>{following && following.length}</span> Following</p>
+              <p onClick={() => changeDisplay('following')}>
+                <span>{following && following.length}</span> Following
+              </p>
             </div>
             <p>{bio}</p>
           </InfoContainer>

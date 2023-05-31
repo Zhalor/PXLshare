@@ -7,6 +7,7 @@ import { UserContext } from '../RouteSwitch';
 import Header from './Header';
 import getCroppedImg from '../cropImage';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
+import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
   width: fit-content;
@@ -85,6 +86,7 @@ function ImageUploadPage() {
   const [localFile, setLocalFile] = useState('');
   const [stage, setStage] = useState('choose');
   const [desc, setDesc] = useState('');
+  let navigate = useNavigate()
 
   useEffect(() => {
     handleFileChange();
@@ -146,8 +148,8 @@ function ImageUploadPage() {
       const data = await fetch(croppedImage);
       const blob = await data.blob();
       const fileType = blob.type;
-      const testFile = new File([blob], file.name, { type: fileType });
-      const uploadedFile = await uploadBytes(storageRef, blob);
+      const imageFile = new File([blob], file.name, { type: fileType });
+      const uploadedFile = await uploadBytes(storageRef, imageFile);
 
       const docRef = await addDoc(collection(db, 'users', user.uid, 'Uploads'), {
         dateUploaded: new Date(),
@@ -165,6 +167,7 @@ function ImageUploadPage() {
       });
 
       console.log('File has been uploaded', uploadedFile);
+      navigate(`/p/${user.displayName}`, {state:{uid: user.uid, disp: 'gallery'}})
     } catch(error) {
       console.log(error)
     }

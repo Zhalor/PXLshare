@@ -35,6 +35,15 @@ const SearchBar = styled.div`
   position: relative;
 `;
 
+const StyledInput = styled.input`
+  padding: 5px;
+  font-size: .9rem;
+
+  &:focus + div {
+    display: flex;
+  }
+`;
+
 const LinksContainer = styled.nav`
   display: flex;
   align-items: center;
@@ -49,15 +58,29 @@ const StyledLink = styled(Link)`
 const StyledUserList = styled.div`
   display: none;
   position: absolute;
-  top: 30px;
+  top: 35px;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
   background-color: white;
-  width: 181px;
+  width: 200px;
   border: 1px solid rgba(114, 114, 114, 0.2);
-  padding: 6px;
+
+  &:hover {
+    display: flex;
+  }
 `;
+
+const StyledSearchLink = styled(StyledLink)`
+  border-top: 1px solid rgba(114, 114, 114, 0.2);
+  border-bottom: 1px solid rgba(114, 114, 114, 0.2);
+  padding: 8px 0px;
+  width: 100%;
+  text-align: center;
+  transition: background-color .5s;
+
+  &:hover {
+    background-color: rgba(231, 231, 231, 0.2);
+  }
+`
 
 function Header() {
 
@@ -74,10 +97,8 @@ async function handleChange(search) {
   if(search.trim()) {
     const data = await getDoc(doc(db, 'users', 'userList'));
     const users = data.data().users;
-    const reg = new RegExp(`${search}.*`, 'i');
-    console.log(users, reg)
+    const reg = new RegExp(`^${search}\w*`, 'ig');
     const searchList = users.filter(user => user.username.match(reg));
-    console.log(searchList);
     setUserList(searchList);
   } else {
     setUserList([]);
@@ -91,12 +112,20 @@ async function handleChange(search) {
           <Logo>PXLshare</Logo>
         </StyledLink>
         <SearchBar>
-          <input type="text" onChange={(e) => handleChange(e.target.value)} />
-          <StyledUserList style={userList.length > 0 ? {display: 'flex'} : null}>
-            {userList.map(user => {
-                return <StyledLink to={`/p/${user.username}`} state={{uid: user.uid, disp: 'gallery'}}>{user.username}</StyledLink>
-              })}
-          </StyledUserList>
+          <StyledInput type="text" onChange={(e) => handleChange(e.target.value)} />
+          {
+            userList.length > 0 ?
+              <StyledUserList>
+              {
+                userList.map(user => {
+                  return <StyledSearchLink to={`/p/${user.username}`} state={{uid: user.uid, disp: 'gallery'}}>{user.username}</StyledSearchLink>
+                })
+              }
+            </StyledUserList>
+          :
+            null
+          }
+          
         </SearchBar>
         <LinksContainer>
 
