@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
-import { db, collection, doc, getDocs, getDoc, storage, ref, getDownloadURL, updateDoc, arrayUnion, arrayRemove, getFirebaseUserDoc} from '../firebase';
+import { db, collection, doc, getDocs, getDoc, storage, ref, getDownloadURL, updateDoc, arrayUnion, arrayRemove, getFirebaseUserDoc, getFollowers, getFollowing, getUploads} from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
-import ProfileFollowers from './ProfileFollowers';
-import ProfileFollowing from './ProfileFollowing';
+import FollowersFollowingList from './FollowersFollowingList';
 import Gallery from './Gallery';
 import { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../RouteSwitch';
@@ -87,9 +86,8 @@ function ProfilePage() {
     getCurrentUserFollowing();
   }, []);
 
-  useEffect(() => {
+  useEffect(() => {   
     getProfileInfo();
-    getUploads();
     setDisplay('gallery');
   }, [uid]);
 
@@ -97,31 +95,22 @@ function ProfilePage() {
     try {
       const data = await getDoc(doc(db, 'users', uid));
       const profileInfo = data.data();
+
+      const test = await getFollowers(uid);
+      const test2 = await getFollowing(uid);
+      const test3 = await getUploads(uid)
       
+      setFollowers(test);
+      setFollowing(test2);
       setUsername(profileInfo.username);
       setBio(profileInfo.bio);
-      setFollowers(profileInfo.followers);
-      setFollowing(profileInfo.following);
+      setImages(test3);
       
       const path = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));
 
       setProfilePicture(path);
     } catch(error) {
       console.log(error);
-    }
-  }
-
-  async function getUploads() {
-    try {
-      const snapshot = await getDocs(collection(db, 'users', uid, 'Uploads'));
-      const arr = [];
-      snapshot.docs.forEach(item => {
-        const obj = item.data();
-        arr.push(obj);
-      });
-      setImages(arr)
-    } catch(error) {
-      console.log(error)
     }
   }
 
@@ -183,7 +172,7 @@ function ProfilePage() {
                 <span>{followers && followers.length}</span> Followers 
               </p>
               <p onClick={() => changeDisplay('following')}>
-                <span>{following && following.length}</span> Following
+                <span>{following.length}</span> Following
               </p>
             </div>
             <p>{bio}</p>
@@ -191,13 +180,13 @@ function ProfilePage() {
         </AccountInfoContainer>
         {
           display === 'gallery' ?
-            <Gallery images={images} username={username} uid={uid} />
+            <Gallery images={images} />
           :
           display === 'followers' ?
-            <ProfileFollowers followers={followers} />
+            <FollowersFollowingList users={followers} />
           :
           display === 'following' ?
-            <ProfileFollowing following={following} />
+            <FollowersFollowingList users={following} />
           :
           null
         }

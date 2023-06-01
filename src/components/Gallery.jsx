@@ -15,7 +15,7 @@ function Gallery(props) {
   return (
     <StyledGallery>
       {props.images.map(image => {
-              return <GalleryImageContainer image={image} username={props.username} uid={props.uid} />
+              return <GalleryImageContainer image={image}/>
             })}
     </StyledGallery>
   )

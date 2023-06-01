@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import FollowerFollowed from './FollowerFollowed';
 
-const FollowerList = styled.div`
+const FollowerFollowingList = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -11,15 +11,15 @@ const FollowerList = styled.div`
   border-top: 1px solid rgba(0, 0, 0, 0.2);
 `;
 
-function ProfileFollowers(props) {
+function FollowersFollowingList(props) {
 
   return (
-    <FollowerList>
-      {props.followers.map(uid => {
-          return <FollowerFollowed uid={uid} />
+    <FollowerFollowingList>
+      {props.users.map(user => {
+          return <FollowerFollowed user={user} />
         })}
-    </FollowerList>
+    </FollowerFollowingList>
   )
 }
 
-export default ProfileFollowers;
+export default FollowersFollowingList;

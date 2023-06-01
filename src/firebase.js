@@ -28,6 +28,39 @@ async function getFirebaseUserDoc(uid) {
   return arr[0];
 }
 
+async function getFollowers(uid) {
+  const userDoc = await getFirebaseUserDoc(uid);
+  const followers = [];
+  for(let user of userDoc.followers) {
+    const followerDoc = await getFirebaseUserDoc(user);
+    const profPic = await getDownloadURL(ref(storage, followerDoc.profilePictureURL));
+    followers.push({uid: followerDoc.uid, profPic: profPic, username: followerDoc.username});
+  }
+  return followers;
+}
+
+async function getFollowing(uid) {
+  const userDoc = await getFirebaseUserDoc(uid);
+  const following = [];
+  for(let user of userDoc.following) {
+    const followingDoc = await getFirebaseUserDoc(user);
+    const profPic = await getDownloadURL(ref(storage, followingDoc.profilePictureURL));
+    following.push({uid: followingDoc.uid, profPic: profPic, username: followingDoc.username});
+  }
+  return following;
+}
+
+async function getUploads(uid) {
+  const userUploads = await getDocs(collection(db, 'users', uid, 'Uploads'));
+  const uploads = [];
+  for(let upload of userUploads.docs) {
+    const imageInfo = upload.data();
+    const path = await getDownloadURL(ref(storage, imageInfo.url));
+    uploads.push({imageInfo: imageInfo, path: path});
+  }
+  return uploads;
+}
+
 export { db, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, storage, ref, uploadBytes, getDownloadURL, deleteObject,
    addDoc, deleteDoc, query, where, serverTimestamp, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signOut,
-   onAuthStateChanged, updateProfile, getFirebaseUserDoc }
+   onAuthStateChanged, updateProfile, getFirebaseUserDoc, getFollowers, getFollowing, getUploads }

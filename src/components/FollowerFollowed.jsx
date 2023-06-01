@@ -31,26 +31,11 @@ const StyledLink = styled(Link)`
 `
 
 function FollowerFollowed(props) {
-
-  const [username, setUsername] = useState('');
-  const [profilePicture, setProfilePicture] = useState('');
-
-  useEffect(() => {
-    async function getUserInfo() {
-      const user = await getFirebaseUserDoc(props.uid);
-      const profPic = await getDownloadURL(ref(storage, user.profilePictureURL));
-      setUsername(user.username);
-      setProfilePicture(profPic)
-    }
-
-    getUserInfo();
-  }, []);
-  
   return (
-    <StyledLink to={`/p/${username}`} state={{uid: props.uid}}>
+    <StyledLink to={`/p/${props.user.username}`} state={{uid: props.user.uid}}>
       <Container>
-        <ProfilePicture src={profilePicture} alt="" />
-        {username}
+        <ProfilePicture src={props.user.profPic} alt="" />
+        {props.user.username}
       </Container>
     </StyledLink>
   )

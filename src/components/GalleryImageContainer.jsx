@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import LikesBtn from './LikesBtn';
-import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, ref, getDownloadURL } from '../firebase';
+import { db, doc, updateDoc, arrayRemove, arrayUnion} from '../firebase';
 import { useState, useEffect,useContext} from 'react';
 import { UserContext } from '../RouteSwitch';
 
@@ -39,33 +39,18 @@ const ImageOverlay = styled.div`
 
 function GalleryImageContainer(props) {
 
-  useEffect(() => {
-    getImageURL();
-  }, []);
-
   const user = useContext(UserContext);
-  const [imageURL, setImageURL] = useState('');
-  const [likes, setLikes] = useState(props.image.likes);
-
-  async function getImageURL() {
-    try {
-      const path = await getDownloadURL(ref(storage, props.image.url));
-      console.log(path)
-      setImageURL(path);
-    } catch(error) {
-      console.log(error);
-    }
-  }
+  const [likes, setLikes] = useState(props.image.imageInfo.likes);
 
   async function toggleLike(isLiked) {
     if(isLiked) {
-      await updateDoc(doc(db, 'users', props.uid, 'Uploads', props.image.docID), {
+      await updateDoc(doc(db, 'users', props.image.imageInfo.uid, 'Uploads', props.image.imageInfo.docID), {
         likes: arrayRemove(user.uid)
       });
       setLikes(likes.filter(item => item !== user.uid));
       
     } else {
-      await updateDoc(doc(db, 'users', props.uid, 'Uploads', props.image.docID), {
+      await updateDoc(doc(db, 'users', props.image.imageInfo.uid, 'Uploads', props.image.imageInfo.docID), {
         likes: arrayUnion(user.uid)
       });
       setLikes([...likes, user.uid]);
@@ -74,9 +59,9 @@ function GalleryImageContainer(props) {
 
   return (
     <ImageContainer>
-      <Image src={imageURL} />
+      <Image src={props.image.path} />
       <ImageOverlay >
-        <LikesBtn likes={likes} uid={props.uid} docID={props.image.docID} toggleLike={toggleLike} />
+        <LikesBtn likes={likes} toggleLike={toggleLike} />
         {
           likes ?
             likes.length
