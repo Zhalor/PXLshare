@@ -1,8 +1,5 @@
 import styled from 'styled-components';
 import LikesBtn from './LikesBtn';
-import { db, doc, updateDoc, arrayRemove, arrayUnion} from '../firebase';
-import { useState, useEffect,useContext} from 'react';
-import { UserContext } from '../RouteSwitch';
 
 const ImageContainer = styled.div`
   position: relative;
@@ -38,27 +35,6 @@ const ImageOverlay = styled.div`
 `;
 
 function GalleryImageContainer(props) {
-
-  // useEffect(() => {
-  //   setLikes(props.image.imageInfo.likes);
-  // }, [props.image]);
-
-  // async function toggleLike(isLiked) {
-  //   if(isLiked) {
-  //     await updateDoc(doc(db, 'users', props.image.imageInfo.uid, 'Uploads', props.image.imageInfo.docID), {
-  //       likes: arrayRemove(user.uid)
-  //     });
-  //     setLikes(likes.filter(item => item !== user.uid));
-      
-  //   } else {
-  //     await updateDoc(doc(db, 'users', props.image.imageInfo.uid, 'Uploads', props.image.imageInfo.docID), {
-  //       likes: arrayUnion(user.uid)
-  //     });
-  //     setLikes([...likes, user.uid]);
-  //   }
-  // }
-
-
 
   return (
     <ImageContainer>

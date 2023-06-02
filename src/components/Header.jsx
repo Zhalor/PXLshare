@@ -130,7 +130,7 @@ async function handleChange(search) {
         <LinksContainer>
 
           {width > 600 ? 
-            <Link to={'/upload'}>
+            <Link to={'/upload'} state={{profilePicture: false}}>
               <UploadIcon />
             </Link> : 
             null}

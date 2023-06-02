@@ -107,7 +107,7 @@ function ContentCard(props) {
     </Container>
     <PostImage src={image} alt={`Image uploaded by ${props.upload.username}`} />
     <Container>
-      <LikesBtn likes={likes} uid={props.upload.uid} docID={props.upload.docID} toggleLike={toggleLike} />
+      <LikesBtn likes={likes} image={props.upload} toggleLike={toggleLike} />
       <CommentIcon onClick={handleClick} />
     </Container>
     <Caption>{props.upload.desc}</Caption>

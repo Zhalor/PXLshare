@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { createGlobalStyle } from 'styled-components';
-import { db, collection, doc, getDocs, getDoc, storage, ref, getDownloadURL, updateDoc, arrayUnion, arrayRemove, getFirebaseUserDoc, getFollowers, getFollowing, getUploads} from '../firebase';
+import { db, doc, getDoc, storage, ref, getDownloadURL, updateDoc, arrayUnion, arrayRemove, getFirebaseUserDoc, getFollowers, getFollowing, getUploads} from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
 import FollowersFollowingList from './FollowersFollowingList';
@@ -8,6 +8,9 @@ import Gallery from './Gallery';
 import { useState, useEffect, useContext } from 'react';
 import { UserContext } from '../RouteSwitch';
 import { useLocation } from 'react-router-dom';
+import { ReactComponent as EditIcon } from '../icons/EditIcon.svg'
+import { ReactComponent as CheckIcon } from '../icons/CheckIcon.svg'
+import { Link } from 'react-router-dom';
 
 const GlobalStyle = createGlobalStyle`
   * {
@@ -76,6 +79,7 @@ function ProfilePage() {
   const [following, setFollowing] = useState([]);
   const [currentUserFollowing, setCurrentUserFollowing] = useState([])
   const [display, setDisplay] = useState('gallery');
+  const [editBio, setEditBio] = useState(false);
 
   useEffect(() => {
     async function getCurrentUserFollowing() {
@@ -146,13 +150,10 @@ function ProfilePage() {
       const newLikes = images.map(image => {
         if(image.imageInfo.docID == docID) {
           let index = image.imageInfo.likes.indexOf(loggedInUserUid);
-          console.log(index)
           image.imageInfo.likes.splice(index, 1);
-          console.log(index, image.imageInfo.docID)
         }
         return image;
       });
-      console.log(newLikes);
       setImages(newLikes)
       
     } else {
@@ -169,10 +170,21 @@ function ProfilePage() {
     }
   }
 
+  async function toggleEditBio(bool) {
+    if(bool) {
+      await updateDoc(doc(db, 'users', user.uid), {
+        bio: bio,
+      });
+      setEditBio(false);
+    } else {
+      setEditBio(true);
+    }
+  }
+
 
   function changeDisplay(disp) {
     setDisplay(disp);
-    console.log(images)
+    console.log(user)
   }
 
   return (
@@ -181,7 +193,7 @@ function ProfilePage() {
       <Header />
       <ProfileContainer>
         <AccountInfoContainer>
-          <ProfilePicture src={profilePicture} />
+          <Link to={'/upload'} state={{profilePicture: true}}><ProfilePicture src={profilePicture} /></Link>
           <InfoContainer>
             <div>
               <h2 onClick={getUploads}>{username}</h2>
@@ -206,7 +218,18 @@ function ProfilePage() {
                 <span>{following.length}</span> Following
               </p>
             </div>
-            <p>{bio}</p>
+            {
+              user.uid == uid ?
+                (editBio ? 
+                  <>
+                    <input type="text" onChange={(e) => setBio(e.target.value)} placeholder={bio} /><CheckIcon onClick={() => toggleEditBio(true)} />
+                  </>
+                :
+                  <p>{bio}<EditIcon onClick={() => toggleEditBio(false)} /></p>)
+              :
+                <p>{bio}</p>
+            }
+ 
           </InfoContainer>
         </AccountInfoContainer>
         {

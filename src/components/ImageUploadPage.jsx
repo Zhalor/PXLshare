@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext,useCallback } from 'react';
 import styled from 'styled-components';
-import { storage, ref, uploadBytes, getDownloadURL, deleteObject } from '../firebase';
-import { db, doc, getDoc, setDoc, updateDoc, addDoc, collection, deleteDoc } from '../firebase';
+import { storage, ref, uploadBytes, updateProfile } from '../firebase';
+import { db, doc, updateDoc, addDoc, collection, deleteObject } from '../firebase';
 import Cropper from 'react-easy-crop';
 import { UserContext } from '../RouteSwitch';
 import Header from './Header';
 import getCroppedImg from '../cropImage';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Container = styled.div`
   width: fit-content;
@@ -78,6 +78,7 @@ const StyledCroppedImage = styled.img`
 function ImageUploadPage() {
 
   const user = useContext(UserContext);
+  const { profilePicture } = useLocation().state;
   const [crop, setCrop] = useState({x: 0, y: 0});
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
@@ -142,34 +143,61 @@ function ImageUploadPage() {
   }, []);
 
   async function uploadFile() {
-    try {
-      const storageURL = `${user.uid}/Uploads/${file.name}`;
-      const storageRef = ref(storage, storageURL);
-      const data = await fetch(croppedImage);
-      const blob = await data.blob();
-      const fileType = blob.type;
-      const imageFile = new File([blob], file.name, { type: fileType });
-      const uploadedFile = await uploadBytes(storageRef, imageFile);
+    if(profilePicture) {
+      try {
+        await deleteObject(ref(storage, user.photoURL));
 
-      const docRef = await addDoc(collection(db, 'users', user.uid, 'Uploads'), {
-        dateUploaded: new Date(),
-        desc: desc,
-        filename: file.name,
-        likes: [],
-        url: storageURL,
-        uid: user.uid,
-        username: user.displayName,
-        comments: []
-      });
+        const storageURL = `${user.uid}/ProfilePicture/${file.name}`;
+        const storageRef = ref(storage, storageURL);
+        const data = await fetch(croppedImage);
+        const blob = await data.blob();
+        const fileType = blob.type;
+        const imageFile = new File([blob], file.name, { type: fileType });
+        const uploadedFile = await uploadBytes(storageRef, imageFile);
+  
+        await updateDoc(doc(db, 'users', user.uid), {
+          profilePictureURL: storageURL,
+        });
 
-      await updateDoc(doc(db, 'users', user.uid, 'Uploads', docRef.id), {
-        docID: docRef.id,
-      });
-
-      console.log('File has been uploaded', uploadedFile);
-      navigate(`/p/${user.displayName}`, {state:{uid: user.uid, disp: 'gallery'}})
-    } catch(error) {
-      console.log(error)
+        await updateProfile(user, {
+          photoURL: storageURL,
+        });
+  
+        console.log('File has been uploaded', uploadedFile);
+        navigate(`/p/${user.displayName}`, {state:{uid: user.uid, disp: 'gallery'}})
+      } catch(error) {
+        console.log(error)
+      }
+    } else {
+      try {
+        const storageURL = `${user.uid}/Uploads/${file.name}`;
+        const storageRef = ref(storage, storageURL);
+        const data = await fetch(croppedImage);
+        const blob = await data.blob();
+        const fileType = blob.type;
+        const imageFile = new File([blob], file.name, { type: fileType });
+        const uploadedFile = await uploadBytes(storageRef, imageFile);
+  
+        const docRef = await addDoc(collection(db, 'users', user.uid, 'Uploads'), {
+          dateUploaded: new Date(),
+          desc: desc,
+          filename: file.name,
+          likes: [],
+          url: storageURL,
+          uid: user.uid,
+          username: user.displayName,
+          comments: []
+        });
+  
+        await updateDoc(doc(db, 'users', user.uid, 'Uploads', docRef.id), {
+          docID: docRef.id,
+        });
+  
+        console.log('File has been uploaded', uploadedFile);
+        navigate(`/p/${user.displayName}`, {state:{uid: user.uid, disp: 'gallery'}})
+      } catch(error) {
+        console.log(error)
+      }
     }
   }
 
