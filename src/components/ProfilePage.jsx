@@ -95,19 +95,16 @@ function ProfilePage() {
     try {
       const data = await getDoc(doc(db, 'users', uid));
       const profileInfo = data.data();
-
-      const test = await getFollowers(uid);
-      const test2 = await getFollowing(uid);
-      const test3 = await getUploads(uid)
-      
-      setFollowers(test);
-      setFollowing(test2);
-      setUsername(profileInfo.username);
-      setBio(profileInfo.bio);
-      setImages(test3);
-      
+      const userFollowers = await getFollowers(uid);
+      const userFollowing = await getFollowing(uid);
+      const uploads = await getUploads(uid)
       const path = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));
 
+      setFollowers(userFollowers);
+      setFollowing(userFollowing);
+      setUsername(profileInfo.username);
+      setBio(profileInfo.bio);
+      setImages(uploads);
       setProfilePicture(path);
     } catch(error) {
       console.log(error);
@@ -123,8 +120,9 @@ function ProfilePage() {
       followers: arrayUnion(user.uid)
     });
 
+    const path = await getDownloadURL(ref(storage, user.photoURL));
     setCurrentUserFollowing([...currentUserFollowing, uid]);
-    setFollowers([...followers, user.uid]);
+    setFollowers([...followers, {uid: user.uid, profPic: path, username: user.displayName}]);
   }
 
   async function unfollowUser() {
@@ -137,11 +135,44 @@ function ProfilePage() {
     });
 
     setCurrentUserFollowing(currentUserFollowing.filter(item => item !== uid));
-    setFollowers(followers.filter(item => item == uid));
+    setFollowers(followers.filter(item => item.uid !== user.uid));
   }
+
+  async function toggleLike(isLiked, loggedInUserUid, docID) {
+    if(isLiked) {
+      await updateDoc(doc(db, 'users', uid, 'Uploads', docID), {
+        likes: arrayRemove(loggedInUserUid)
+      });
+      const newLikes = images.map(image => {
+        if(image.imageInfo.docID == docID) {
+          let index = image.imageInfo.likes.indexOf(loggedInUserUid);
+          console.log(index)
+          image.imageInfo.likes.splice(index, 1);
+          console.log(index, image.imageInfo.docID)
+        }
+        return image;
+      });
+      console.log(newLikes);
+      setImages(newLikes)
+      
+    } else {
+      await updateDoc(doc(db, 'users', uid, 'Uploads', docID), {
+        likes: arrayUnion(loggedInUserUid)
+      });
+      const newLikes = images.map(image => {
+        if(image.imageInfo.docID == docID) {
+          image.imageInfo.likes.push(loggedInUserUid);
+        }
+        return image;
+      });
+      setImages(newLikes);
+    }
+  }
+
 
   function changeDisplay(disp) {
     setDisplay(disp);
+    console.log(images)
   }
 
   return (
@@ -169,7 +200,7 @@ function ProfilePage() {
                 <span>{images.length}</span> Photos
               </p>
               <p onClick={() => changeDisplay('followers')}>
-                <span>{followers && followers.length}</span> Followers 
+                <span>{followers.length}</span> Followers 
               </p>
               <p onClick={() => changeDisplay('following')}>
                 <span>{following.length}</span> Following
@@ -180,7 +211,7 @@ function ProfilePage() {
         </AccountInfoContainer>
         {
           display === 'gallery' ?
-            <Gallery images={images} />
+            <Gallery images={images} toggleLike={toggleLike}/>
           :
           display === 'followers' ?
             <FollowersFollowingList users={followers} />

@@ -39,32 +39,35 @@ const ImageOverlay = styled.div`
 
 function GalleryImageContainer(props) {
 
-  const user = useContext(UserContext);
-  const [likes, setLikes] = useState(props.image.imageInfo.likes);
+  // useEffect(() => {
+  //   setLikes(props.image.imageInfo.likes);
+  // }, [props.image]);
 
-  async function toggleLike(isLiked) {
-    if(isLiked) {
-      await updateDoc(doc(db, 'users', props.image.imageInfo.uid, 'Uploads', props.image.imageInfo.docID), {
-        likes: arrayRemove(user.uid)
-      });
-      setLikes(likes.filter(item => item !== user.uid));
+  // async function toggleLike(isLiked) {
+  //   if(isLiked) {
+  //     await updateDoc(doc(db, 'users', props.image.imageInfo.uid, 'Uploads', props.image.imageInfo.docID), {
+  //       likes: arrayRemove(user.uid)
+  //     });
+  //     setLikes(likes.filter(item => item !== user.uid));
       
-    } else {
-      await updateDoc(doc(db, 'users', props.image.imageInfo.uid, 'Uploads', props.image.imageInfo.docID), {
-        likes: arrayUnion(user.uid)
-      });
-      setLikes([...likes, user.uid]);
-    }
-  }
+  //   } else {
+  //     await updateDoc(doc(db, 'users', props.image.imageInfo.uid, 'Uploads', props.image.imageInfo.docID), {
+  //       likes: arrayUnion(user.uid)
+  //     });
+  //     setLikes([...likes, user.uid]);
+  //   }
+  // }
+
+
 
   return (
     <ImageContainer>
       <Image src={props.image.path} />
-      <ImageOverlay >
-        <LikesBtn likes={likes} toggleLike={toggleLike} />
+      <ImageOverlay>
+        <LikesBtn likes={props.image.imageInfo.likes} image={props.image.imageInfo} toggleLike={props.toggleLike} />
         {
-          likes ?
-            likes.length
+          props.image.imageInfo.likes ?
+            props.image.imageInfo.likes.length
           :
             0
         }

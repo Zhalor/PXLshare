@@ -27,9 +27,9 @@ function LikesBtn(props) {
     <>
       {
         props.likes.includes(user.uid) ?
-          <StyledLiked onClick={() => props.toggleLike(true)} />
+          <StyledLiked onClick={() => props.toggleLike(true, user.uid, props.image.docID)} />
         :
-          <StyledLike onClick={() => props.toggleLike(false)} />
+          <StyledLike onClick={() => props.toggleLike(false, user.uid, props.image.docID)} />
       }
     </>
   )
