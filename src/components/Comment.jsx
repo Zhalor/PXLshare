@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { db, doc, arrayRemove, updateDoc } from "../firebase";
 import styled from "styled-components";
 import { UserContext } from "../RouteSwitch";
+import { Link } from 'react-router-dom';
 
 const StyledComment = styled.div`
   display: flex;
@@ -34,6 +35,11 @@ const DeleteBtn = styled.button`
   }
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
+`;
+
 function Comment(props) {
 
   const user = useContext(UserContext);
@@ -51,7 +57,7 @@ function Comment(props) {
 
   return (
     <StyledComment>
-      <p><Username>{props.comment.username}</Username>: {props.comment.comment}</p>
+      <p><StyledLink to={`/p/${props.comment.username}`} state={{uid: props.comment.uid}}><Username>{props.comment.username}</Username></StyledLink>: {props.comment.comment}</p>
       <DeleteBtn onClick={deleteComment}>X</DeleteBtn>
     </StyledComment>
   )

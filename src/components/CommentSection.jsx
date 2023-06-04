@@ -46,7 +46,6 @@ function CommentSection(props) {
 
   async function addComment() {
     if(comment.trim()) {
-      console.log(comment)
       try {
         await updateDoc(doc(db, 'users', props.upload.uid, 'Uploads', props.upload.docID), {
           comments: arrayUnion({

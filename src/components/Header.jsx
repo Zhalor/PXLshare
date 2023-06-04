@@ -2,12 +2,12 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
-import AccountIcon from '../icons/AccountIcon';
+import  { ReactComponent as HomeIcon } from '../icons/HomeIcon.svg'
+import  { ReactComponent as AccountIcon } from '../icons/AccountIcon.svg'
 import LogoutIcon from '../icons/LogoutIcon';
-import HomeIcon from '../icons/HomeIcon';
-import Logo from './Logo';
 import { UserContext } from '../RouteSwitch';
 import { db, getDoc, doc} from '../firebase';
+import Logo from './Logo';
 
 const HeaderContainer = styled.header`
   position: sticky;

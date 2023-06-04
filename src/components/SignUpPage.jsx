@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { getAuth, createUserWithEmailAndPassword, updateProfile, db, doc, setDoc } from '../firebase';
-import Image from '../cog-outline.png';
+import { getAuth, createUserWithEmailAndPassword, updateProfile, db, doc, setDoc, updateDoc, arrayUnion } from '../firebase';
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import Logo from './Logo';
 
 const Container = styled.div`
@@ -9,11 +9,6 @@ const Container = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-`;
-
-const LoginImage = styled.img`
-  width: 256px;
-  height: auto;
 `;
 
 const LoginContainer = styled.div`
@@ -34,11 +29,6 @@ const FormContainer = styled.form`
   background-color: white;
   padding: 20px;
   border: 1px solid rgba(114, 114, 114, 0.2);
-`;
-
-const StyledLogo = styled(Logo)`
-  text-align: center;
-  margin-bottom: 10px;
 `;
 
 const StyledInput = styled.input`
@@ -82,49 +72,80 @@ const StyledLink = styled(Link)`
   font-weight: bold;
 `;
 
+const PasswordError = styled.span`
+  color: red;
+  font-size: .8rem;
+  font-weight: bold;
+`;
+
 function SignUpPage() {
 
   let navigate = useNavigate();
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+
+  function checkValidity(e) {
+    if(e.validity.patternMismatch) {
+      e.setCustomValidity('Username can contain letters, numbers, and a underscores.');
+      return false;
+    } else {
+      e.setCustomValidity('');
+      return true;
+    }
+  }
 
   async function createAccount(e) {
     e.preventDefault();
-    try {
-      const auth = getAuth();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const username = document.getElementById('username').value;
-  
-        const userCreds = await createUserWithEmailAndPassword(auth, email, password);
-        const updatedProfile = await updateProfile(auth.currentUser, {
-          displayName: username,
-          photoURL: 'default/default-profile-picture.png',
-        });
-        await setDoc(doc(db, 'users', auth.currentUser.uid), {
-          bio: '',
-          followers: [],
-          following: [],
-          profilePictureURL: auth.currentUser.photoURL,
-          username: auth.currentUser.displayName,
-          uid: auth.currentUser.uid,
-        });
-        console.log(userCreds);
-        console.log(updatedProfile);
-        navigate('/');
-    } catch(error) {
-      console.log(error);
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    console.log
+    if(password === confirmPassword) {
+      try {
+        const auth = getAuth();
+    
+          await createUserWithEmailAndPassword(auth, email, password);
+          await updateProfile(auth.currentUser, {
+            displayName: username,
+            photoURL: 'default/default-profile-picture.png',
+          });
+          await setDoc(doc(db, 'users', auth.currentUser.uid), {
+            bio: '',
+            followers: [],
+            following: [],
+            profilePictureURL: auth.currentUser.photoURL,
+            username: auth.currentUser.displayName,
+            uid: auth.currentUser.uid,
+          });
+          await updateDoc(doc(db, 'users', 'userList'), {
+            users: arrayUnion({
+              uid: auth.currentUser.uid,
+              username: auth.currentUser.displayName,
+            })
+          })
+          navigate('/');
+      } catch(error) {
+        console.log(error);
+      }
     }
   }
 
   return (
     <Container>
-      <LoginImage src={Image} alt="" />
       <LoginContainer>
         <FormContainer onSubmit={(e) => createAccount(e)}>
-          <StyledLogo>PXLshare</StyledLogo>
-          <StyledInput type="text" placeholder='Username' id='username' required />
+          <Logo>PXLshare</Logo>
+          <StyledInput onInput={(e) => checkValidity(e.target)} type="text" placeholder='Username' id='username' pattern='^[\w]+$' maxLength={16} required />
           <StyledInput type="email" placeholder='Email Address' id='email' required />
-          <StyledInput type="password" placeholder='Password' id='password' required />
-          <StyledInput type="password" placeholder='Confirm Password' id='confirm-password' required />
+          {
+            password === confirmPassword ?
+              null
+            :
+              <PasswordError>*Passwords do not match</PasswordError>
+          }
+          <StyledInput type="password" placeholder='Password' id='password' minLength={6} maxLength={12} onChange={(e) => setPassword(e.target.value)} required />
+          <StyledInput type="password" placeholder='Confirm Password' id='confirm-password' minLength={6} maxLength={12} onChange={(e) => setConfirmPassword(e.target.value)} required />
           <SignUpBtn type='submit'>Create Account</SignUpBtn>
         </FormContainer>
         <SignUpText>Already have an account? <StyledLink to={'/login'}>Login</StyledLink></SignUpText>

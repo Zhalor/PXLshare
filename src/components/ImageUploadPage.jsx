@@ -145,8 +145,9 @@ function ImageUploadPage() {
   async function uploadFile() {
     if(profilePicture) {
       try {
-        await deleteObject(ref(storage, user.photoURL));
-
+        if(user.photoURL !== 'default/default-profile-picture.png') {
+          await deleteObject(ref(storage, user.photoURL));
+        }
         const storageURL = `${user.uid}/ProfilePicture/${file.name}`;
         const storageRef = ref(storage, storageURL);
         const data = await fetch(croppedImage);

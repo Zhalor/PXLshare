@@ -10,6 +10,7 @@ import { UserContext } from '../RouteSwitch';
 import { useLocation } from 'react-router-dom';
 import { ReactComponent as EditIcon } from '../icons/EditIcon.svg'
 import { ReactComponent as CheckIcon } from '../icons/CheckIcon.svg'
+import { ReactComponent as EditProfPicIcon } from '../icons/EditProfPicIcon.svg'
 import { Link } from 'react-router-dom';
 
 const GlobalStyle = createGlobalStyle`
@@ -42,6 +43,12 @@ const ProfilePicture = styled.img`
   flex-shrink: 0;
 `;
 
+const ProfPicContainer = styled.div`
+  position: relative;
+  width: 150px;
+  height: 150px;
+`;
+
 const InfoContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -64,6 +71,26 @@ const InfoContainer = styled.div`
 
   > div > p > span {
     font-weight: bold;
+  }
+`;
+
+const Overlay = styled.div`
+  position: absolute;
+  top: 0px;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  transition: opacity .25s;
+  transition-timing-function: ease-in-out;
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
   }
 `;
 
@@ -193,10 +220,18 @@ function ProfilePage() {
       <Header />
       <ProfileContainer>
         <AccountInfoContainer>
-          <Link to={'/upload'} state={{profilePicture: true}}><ProfilePicture src={profilePicture} /></Link>
+          <ProfPicContainer>
+            <ProfilePicture src={profilePicture} />
+            <Link to={'/upload'} state={{profilePicture: true}}>
+            <Overlay>
+              <EditProfPicIcon />
+            </Overlay>
+            </Link>
+          </ProfPicContainer>
+          
           <InfoContainer>
             <div>
-              <h2 onClick={getUploads}>{username}</h2>
+              <h2>{username}</h2>
               {
                 currentUserFollowing.includes(uid) == true ?
                   <button onClick={unfollowUser}>Unfollow</button>

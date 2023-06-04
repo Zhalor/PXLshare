@@ -1,21 +1,14 @@
 import styled from 'styled-components';
 import { getAuth, signInWithEmailAndPassword } from '../firebase';
-import Image from '../cog-outline.png';
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import Logo from './Logo';
-import { UserContext } from '../RouteSwitch';
-import { useContext } from 'react';
 
 const Container = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-`;
-
-const LoginImage = styled.img`
-  width: 256px;
-  height: auto;
 `;
 
 const LoginContainer = styled.div`
@@ -36,11 +29,6 @@ const FormContainer = styled.form`
   background-color: white;
   padding: 20px;
   border: 1px solid rgba(114, 114, 114, 0.2);
-`;
-
-const StyledLogo = styled(Logo)`
-  text-align: center;
-  margin-bottom: 10px;
 `;
 
 const StyledInput = styled.input`
@@ -92,11 +80,17 @@ const GuestButton = styled.button`
   font-size: .9rem;
   text-align: center;
 `
-
+const LoginError = styled.span`
+  color: red;
+  font-size: .8rem;
+  font-weight: bold;
+  text-align: center;
+`;
 
 function LoginPage() {
 
   let navigate = useNavigate();
+  const [isValid, setIsValid] = useState(true);
 
   async function login(e, justLooking, guestEmail, guestpassword) {
     e.preventDefault();
@@ -115,6 +109,7 @@ function LoginPage() {
         await signInWithEmailAndPassword(auth, email, password);
         navigate('/');
       } catch(e) {
+        setIsValid(false);
         console.log(e);
       }
     }
@@ -122,10 +117,15 @@ function LoginPage() {
 
   return (
     <Container>
-      <LoginImage src={Image} alt="" />
       <LoginContainer>
         <FormContainer onSubmit={(e) => login(e)}>
-          <StyledLogo>PXLshare</StyledLogo>
+          <Logo>PXLshare</Logo>
+          {
+            !isValid ? 
+              <LoginError>Unable to login. Check email and password.</LoginError>
+            :
+              null
+          }
           <StyledInput type="email" placeholder='Email Address' id='email' required />
           <StyledInput type="password" placeholder='Password' id='password' required />
           <LoginBtn type='submit'>Login</LoginBtn>

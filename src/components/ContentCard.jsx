@@ -5,6 +5,7 @@ import { useState, useEffect, useContext, useRef } from 'react';
 import LikesBtn from './LikesBtn';
 import CommentSection from './CommentSection';
 import { UserContext } from '../RouteSwitch';
+import { Link } from 'react-router-dom';
 
 const StyledContentCard = styled.div`
   display: flex;
@@ -19,6 +20,11 @@ const StyledContentCard = styled.div`
   > div:not(:last-child), > h2, > p {
     padding: 0px 0px 8px 20px;
   }
+`;
+
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: black;
 `;
 
 const Container = styled.div`
@@ -103,7 +109,7 @@ function ContentCard(props) {
 
     <Container>
       <StyledProfilePicture src={profilePicture} alt="" />
-      <h2>{props.upload.username}</h2>
+      <StyledLink to={`/p/${props.upload.username}`} state={{uid: props.upload.uid}}><h2>{props.upload.username}</h2></StyledLink>
     </Container>
     <PostImage src={image} alt={`Image uploaded by ${props.upload.username}`} />
     <Container>

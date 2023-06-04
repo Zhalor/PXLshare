@@ -1,12 +1,11 @@
-import { getAuth, signOut } from "firebase/auth";
+import { getAuth, signOut } from "../firebase";
 
 function LogoutIcon() {
 
   async function logout() {
     const auth = getAuth();
     try {
-      const signedOutUser = await signOut(auth)
-      console.log(signedOutUser);
+      await signOut(auth)
     } catch(e) {
       console.log(e);
     }

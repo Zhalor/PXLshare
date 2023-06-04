@@ -12,7 +12,7 @@ const Image = styled.img`
   height: 300px;
 `;
 
-const ImageOverlay = styled.div`
+const Overlay = styled.div`
   position: absolute;
   top: 0px;
   display: flex;
@@ -39,7 +39,7 @@ function GalleryImageContainer(props) {
   return (
     <ImageContainer>
       <Image src={props.image.path} />
-      <ImageOverlay>
+      <Overlay>
         <LikesBtn likes={props.image.imageInfo.likes} image={props.image.imageInfo} toggleLike={props.toggleLike} />
         {
           props.image.imageInfo.likes ?
@@ -47,7 +47,7 @@ function GalleryImageContainer(props) {
           :
             0
         }
-      </ImageOverlay>
+      </Overlay>
     </ImageContainer>
   )
 }

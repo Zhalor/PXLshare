@@ -9,13 +9,20 @@ import { createGlobalStyle } from 'styled-components';
 import { getAuth, onAuthStateChanged } from './firebase';
 import { useState } from 'react';
 import { useEffect } from 'react';
+import Lato from './fonts/Lato.ttf';
 
 const GlobalStyle = createGlobalStyle`
+
+  @font-face {
+    font-family: 'Lato';
+    src: url(${Lato});
+  }
+
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Lato', Arial, Helvetica, sans-serif;
   }
 
   body {

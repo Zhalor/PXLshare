@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { useState, useContext } from 'react';
 import { UserContext } from '../RouteSwitch';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
-import AccountIcon from '../icons/AccountIcon';
-import HomeIcon from '../icons/HomeIcon';
+import  { ReactComponent as HomeIcon } from '../icons/HomeIcon.svg'
+import  { ReactComponent as AccountIcon } from '../icons/AccountIcon.svg'
 
 const StyledFooter = styled.div`
   position: sticky;
