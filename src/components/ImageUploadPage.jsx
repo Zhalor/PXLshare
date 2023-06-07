@@ -1,13 +1,18 @@
 import { useState, useEffect, useContext,useCallback } from 'react';
 import styled from 'styled-components';
 import { storage, ref, uploadBytes, updateProfile } from '../firebase';
-import { db, doc, updateDoc, addDoc, collection, deleteObject } from '../firebase';
+import { db, doc, updateDoc, addDoc, collection, deleteObject, serverTimestamp } from '../firebase';
 import Cropper from 'react-easy-crop';
 import { UserContext } from '../RouteSwitch';
 import Header from './Header';
+import Footer from './Footer';
 import getCroppedImg from '../cropImage';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
 import { useNavigate, useLocation } from 'react-router-dom';
+
+const Test = styled.div`
+  height: 100vh;
+`;
 
 const Container = styled.div`
   width: fit-content;
@@ -180,7 +185,7 @@ function ImageUploadPage() {
         const uploadedFile = await uploadBytes(storageRef, imageFile);
   
         const docRef = await addDoc(collection(db, 'users', user.uid, 'Uploads'), {
-          dateUploaded: new Date(),
+          dateUploaded: serverTimestamp(),
           desc: desc,
           filename: file.name,
           likes: [],
@@ -203,8 +208,8 @@ function ImageUploadPage() {
   }
 
   return (
-    <div>
-      <Header user={user} />   
+    <Test>
+      <Header />   
       {stage === 'choose' ? 
         <Container>
           <label>
@@ -246,7 +251,8 @@ function ImageUploadPage() {
         :
         null
         }
-    </div>
+      <Footer />
+    </Test>
   )
 }
 

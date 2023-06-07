@@ -24,7 +24,7 @@ const LoginContainer = styled.div`
 const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   width: 400px;
   background-color: white;
   padding: 20px;

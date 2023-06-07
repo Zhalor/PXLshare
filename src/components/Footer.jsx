@@ -32,10 +32,10 @@ function Footer(props) {
       <Link to={'/'}>
         <HomeIcon />
       </Link>
-      <Link to={'/upload'}>
+      <Link to={'/upload'} state={{profilePicture: false}}>
         <UploadIcon />
       </Link>
-      <Link to={`/p/${user.displayName}`} state={{uid: props.uid, disp: 'gallery'}} >
+      <Link to={`/p/${user.displayName}`} state={{uid: user.uid, disp: 'gallery'}} >
         <AccountIcon />
       </Link>
     </StyledFooter>

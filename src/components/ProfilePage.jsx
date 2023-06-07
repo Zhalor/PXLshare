@@ -34,6 +34,14 @@ const AccountInfoContainer = styled.div`
   display: flex;
   gap: 150px;
   padding: 0px 20px;
+  max-width: 500px;
+  align-items: center;
+
+  @media(max-width: 700px) {
+    padding: 50px;
+    gap: 80px;
+    margin: 0px auto;
+  }
 `;
 
 const ProfilePicture = styled.img`
@@ -58,6 +66,11 @@ const InfoContainer = styled.div`
   > div {
     display: flex;
     gap: 40px;
+
+    @media(max-width: 700px) {
+      flex-direction: column;
+      gap: 5px;
+    }
   }
 
   > div > button {
@@ -211,7 +224,6 @@ function ProfilePage() {
 
   function changeDisplay(disp) {
     setDisplay(disp);
-    console.log(user)
   }
 
   return (

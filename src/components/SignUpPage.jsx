@@ -24,7 +24,7 @@ const LoginContainer = styled.div`
 const FormContainer = styled.form`
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   width: 400px;
   background-color: white;
   padding: 20px;
@@ -100,7 +100,6 @@ function SignUpPage() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
-    console.log
     if(password === confirmPassword) {
       try {
         const auth = getAuth();

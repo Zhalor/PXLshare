@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, getDocs, getDoc, addDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, query, where, serverTimestamp } from "firebase/firestore"; 
+import { getFirestore, collection, doc, getDocs, getDoc, addDoc, setDoc, updateDoc, deleteDoc, arrayUnion, arrayRemove, query, where, serverTimestamp, Timestamp } from "firebase/firestore"; 
 import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "firebase/auth";
 
@@ -63,4 +63,4 @@ async function getUploads(uid) {
 
 export { db, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, storage, ref, uploadBytes, getDownloadURL, deleteObject,
    addDoc, deleteDoc, query, where, serverTimestamp, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signOut,
-   onAuthStateChanged, updateProfile, getFirebaseUserDoc, getFollowers, getFollowing, getUploads }
+   onAuthStateChanged, updateProfile, getFirebaseUserDoc, getFollowers, getFollowing, getUploads, Timestamp }

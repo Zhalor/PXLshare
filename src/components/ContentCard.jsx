@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import {ReactComponent as CommentIcon} from '../icons/CommentIcon.svg';
-import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, getDownloadURL, ref, getDoc} from '../firebase';
+import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, getDownloadURL, ref, getDoc, serverTimestamp, Timestamp} from '../firebase';
 import { useState, useEffect, useContext, useRef } from 'react';
 import LikesBtn from './LikesBtn';
 import CommentSection from './CommentSection';
 import { UserContext } from '../RouteSwitch';
 import { Link } from 'react-router-dom';
+import LoadingCard from './LoadingCard';
 
 const StyledContentCard = styled.div`
   display: flex;
@@ -59,10 +60,14 @@ function ContentCard(props) {
   const [image, setImage] = useState();
   const [likes, setLikes] = useState(props.upload.likes);
   const [profilePicture, setProfilePicture] = useState();
+  const [isLoading, setIsloading] = useState(true);
+  const currentDate = new Date().getTime();
+  const dateUploaded = props.upload.dateUploaded.seconds;
+  const UploadToCurrentDateDifference = Math.trunc((currentDate/1000/60/60/24) - (dateUploaded/60/60/24));
 
-   useEffect(() => {
+  useEffect(() => {
     getImage();
-    getPorfilePicture();
+    getProfilePicture();
   }, []);
 
   async function getImage() {
@@ -74,12 +79,13 @@ function ContentCard(props) {
     }
   }
 
-  async function getPorfilePicture() {
+  async function getProfilePicture() {
     try {
       const userDoc = await getDoc(doc(db, 'users', props.upload.uid));
       const URL = userDoc.data().profilePictureURL;
       const profilePicturePath = await getDownloadURL(ref(storage, URL));
-      setProfilePicture(profilePicturePath)
+      setProfilePicture(profilePicturePath);
+      setIsloading(false);
     } catch(error) {
       console.log(error);
     }
@@ -105,22 +111,28 @@ function ContentCard(props) {
   }
 
   return (
-   <StyledContentCard>
-
-    <Container>
-      <StyledProfilePicture src={profilePicture} alt="" />
-      <StyledLink to={`/p/${props.upload.username}`} state={{uid: props.upload.uid}}><h2>{props.upload.username}</h2></StyledLink>
-    </Container>
-    <PostImage src={image} alt={`Image uploaded by ${props.upload.username}`} />
-    <Container>
-      <LikesBtn likes={likes} image={props.upload} toggleLike={toggleLike} />
-      <CommentIcon onClick={handleClick} />
-    </Container>
-    <Caption>{props.upload.desc}</Caption>
-    <p>{likes.length} {likes.length == 1 ? 'Like' : 'Likes '}</p>
-    <p>Posted 2 days ago</p>
-    <CommentSection upload={props.upload} inputRef={inputRef} />
-   </StyledContentCard>
+    <>
+    {
+      isLoading ?
+        <LoadingCard />
+      :
+      <StyledContentCard>
+        <Container>
+          <StyledProfilePicture src={profilePicture} alt="" />
+          <StyledLink to={`/p/${props.upload.username}`} state={{uid: props.upload.uid}}><h2>{props.upload.username}</h2></StyledLink>
+        </Container>
+        <PostImage src={image} alt={`Image uploaded by ${props.upload.username}`} />
+        <Container>
+          <LikesBtn likes={likes} image={props.upload} toggleLike={toggleLike} />
+          <CommentIcon onClick={handleClick} />
+        </Container>
+        <Caption>{props.upload.desc}</Caption>
+        <p>{likes.length} {likes.length == 1 ? 'Like' : 'Likes '}</p>
+        <p>Uploaded {UploadToCurrentDateDifference > 0 ? `${UploadToCurrentDateDifference} days ago` : 'today'}</p>
+        <CommentSection upload={props.upload} inputRef={inputRef} />
+       </StyledContentCard>
+    }
+    </>
   )
 }
 

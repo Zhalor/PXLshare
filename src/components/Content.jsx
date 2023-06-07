@@ -30,14 +30,17 @@ function Content() {
         arr.push(upload.data());
       });
     }
-    setFollowingImages(arr);
+    const sortedByNewest = arr.toSorted((first, second) => second.dateUploaded.seconds - first.dateUploaded.seconds);
+    setFollowingImages(sortedByNewest);
   }
 
   return (
    <ContentContainer>
-    {folowingImages.map(upload => {
-      return <ContentCard upload={upload} />
-    })}
+    {
+      folowingImages.map(upload => {
+        return <ContentCard upload={upload} />
+      })
+    }
    </ContentContainer>
   )
 }

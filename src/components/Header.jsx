@@ -18,6 +18,10 @@ const HeaderContainer = styled.header`
   margin-bottom: 20px;
   border-bottom: 1px solid rgba(114, 114, 114, 0.2);
   z-index: 1;
+
+  @media (max-width: 700px) {
+    padding: 20px 5px;
+  }
 `;
 
 const HeaderContent = styled.div`
@@ -26,6 +30,10 @@ const HeaderContent = styled.div`
   margin: 0 auto;
   max-width: 1200px;
   padding: 0px 80px;
+
+  @media (max-width: 1000px) {
+    padding: 0px;
+  }
 `;
 
 const SearchBar = styled.div`
@@ -38,6 +46,7 @@ const SearchBar = styled.div`
 const StyledInput = styled.input`
   padding: 5px;
   font-size: .9rem;
+  width: 190px;
 
   &:focus + div {
     display: flex;
@@ -58,10 +67,10 @@ const StyledLink = styled(Link)`
 const StyledUserList = styled.div`
   display: none;
   position: absolute;
-  top: 35px;
+  top: 34px;
   flex-direction: column;
   background-color: white;
-  width: 200px;
+  width: 190px;
   border: 1px solid rgba(114, 114, 114, 0.2);
 
   &:hover {
@@ -112,7 +121,7 @@ async function handleChange(search) {
           <Logo>PXLshare</Logo>
         </StyledLink>
         <SearchBar>
-          <StyledInput type="text" onChange={(e) => handleChange(e.target.value)} />
+          <StyledInput type="text" onChange={(e) => handleChange(e.target.value)} maxLength={16} placeholder='Search for users...' />
           {
             userList.length > 0 ?
               <StyledUserList>
