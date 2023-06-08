@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import ContentCard from './ContentCard';
+import Header from './Header';
+import Footer from './Footer';
 import { db, collection, getDocs } from '../firebase';
 import { useEffect, useContext, useState } from 'react';
 import { UserContext } from '../RouteSwitch';
@@ -13,8 +15,17 @@ const ContentContainer = styled.div`
 function Content() {
 
   const user = useContext(UserContext);
+  const [footerStyle, setFooterStyle] = useState({});
   const [following] = useFollowing(user.uid);
   const [folowingImages, setFollowingImages] = useState([]);
+
+    function onPageLoad() {
+      if(window.innerHeight < document.body.scrollHeight) {
+        setFooterStyle({position: 'sticky'});
+      } else {
+        setFooterStyle({position: 'absolute'});
+      }
+    }
 
   useEffect(() => {
     if(following) {
@@ -35,13 +46,17 @@ function Content() {
   }
 
   return (
-   <ContentContainer>
-    {
-      folowingImages.map(upload => {
-        return <ContentCard upload={upload} />
-      })
-    }
-   </ContentContainer>
+    <>
+      <Header />
+      <ContentContainer onLoad={onPageLoad}>
+        {
+          folowingImages.map(upload => {
+            return <ContentCard upload={upload} />
+          })
+        }
+      </ContentContainer>
+      <Footer footerStyle={footerStyle} />
+    </>
   )
 }
 

@@ -5,9 +5,11 @@ import { UserContext } from '../RouteSwitch';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
 import  { ReactComponent as HomeIcon } from '../icons/HomeIcon.svg'
 import  { ReactComponent as AccountIcon } from '../icons/AccountIcon.svg'
+import { useEffect } from 'react';
 
 const StyledFooter = styled.div`
-  position: sticky;
+  position: absolute;
+  width: 100%;
   bottom: 0px;
   display: flex;
   justify-content: space-between;
@@ -18,27 +20,31 @@ const StyledFooter = styled.div`
 function Footer(props) {
 
   const user = useContext(UserContext);
-  const [width, setWidth] = useState(window.innerWidth)
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth)
 
   window.addEventListener('resize', () => {
-    const currentWidth = window.innerWidth;
-    setWidth(currentWidth);
+    setWindowWidth(window.innerWidth);
   });
 
-  if(width > 600) return null;
-
   return (
-    <StyledFooter>
-      <Link to={'/'}>
-        <HomeIcon />
-      </Link>
-      <Link to={'/upload'} state={{profilePicture: false}}>
-        <UploadIcon />
-      </Link>
-      <Link to={`/p/${user.displayName}`} state={{uid: user.uid, disp: 'gallery'}} >
-        <AccountIcon />
-      </Link>
-    </StyledFooter>
+    <>
+    {
+      windowWidth < 600 ?
+      <StyledFooter style={props.footerStyle}>
+        <Link to={'/'}>
+          <HomeIcon />
+        </Link>
+        <Link to={'/upload'} state={{profilePicture: false}}>
+          <UploadIcon />
+        </Link>
+        <Link to={`/p/${user.displayName}`} state={{uid: user.uid, disp: 'gallery'}} >
+          <AccountIcon />
+        </Link>
+      </StyledFooter>
+      :
+        null
+    }
+    </>
   );
 }
 

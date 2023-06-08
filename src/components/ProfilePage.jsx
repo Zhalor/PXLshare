@@ -62,10 +62,16 @@ const InfoContainer = styled.div`
   flex-direction: column;
   gap: 20px;
   margin-top: 20px;
+  max-width: 350px;
 
   > div {
     display: flex;
-    gap: 40px;
+    align-items: center;
+    gap: 8px;
+
+    > p {
+      width: 100px;
+    }
 
     @media(max-width: 700px) {
       flex-direction: column;
@@ -73,18 +79,39 @@ const InfoContainer = styled.div`
     }
   }
 
-  > div > button {
-    padding: 6px 12px;
-    font-size: 1rem;
-    background-color: #2370ff;
-    border: 1px solid lightblue;
-    border-radius: 6px;
-    color: white;
+  input {
+    padding: 3px;
   }
 
-  > div > p > span {
-    font-weight: bold;
+  > p:last-of-type {
+    display: flex;
+    gap: 5px;
   }
+`;
+
+const StyledEditIcon = styled(EditIcon)`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const StyledCheckIcon = styled(CheckIcon)`
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const StyledBtn = styled.button`
+  padding: 6px 12px;
+  font-size: 1rem;
+  background-color: #2370ff;
+  border: 1px solid lightblue;
+  border-radius: 6px;
+  color: white;
+`;
+
+const StyledSpan = styled.span`
+  font-weight: bold;
 `;
 
 const Overlay = styled.div`
@@ -111,6 +138,7 @@ function ProfilePage() {
 
   const user = useContext(UserContext);
   const { uid } = useLocation().state;
+  const [footerStyle, setFooterStyle] = useState({});
   const [username, setUsername] = useState('');
   const [profilePicture, setProfilePicture] = useState('');
   const [bio, setBio] = useState('');
@@ -134,6 +162,15 @@ function ProfilePage() {
     getProfileInfo();
     setDisplay('gallery');
   }, [uid]);
+
+  function onPageLoad() {
+    console.log('done')
+    if(window.innerHeight < document.body.scrollHeight) {
+      setFooterStyle({position: 'sticky'});
+    } else {
+      setFooterStyle({position: 'absolute'});
+    }
+  }
 
   async function getProfileInfo() {
     try {
@@ -227,7 +264,7 @@ function ProfilePage() {
   }
 
   return (
-    <>
+    <div onLoad={onPageLoad}>
       <GlobalStyle />
       <Header />
       <ProfileContainer>
@@ -246,33 +283,34 @@ function ProfilePage() {
               <h2>{username}</h2>
               {
                 currentUserFollowing.includes(uid) == true ?
-                  <button onClick={unfollowUser}>Unfollow</button>
+                  <StyledBtn onClick={unfollowUser}>Unfollow</StyledBtn>
                 :
                 user.uid != uid ?
-                  <button onClick={followUser}>Follow</button>
+                  <StyledBtn onClick={followUser}>Follow</StyledBtn>
                 :
                 null
               }
             </div>
             <div>
               <p onClick={() => changeDisplay('gallery')}>
-                <span>{images.length}</span> Photos
+                <StyledSpan>{images.length}</StyledSpan> Photos
               </p>
               <p onClick={() => changeDisplay('followers')}>
-                <span>{followers.length}</span> Followers 
+                <StyledSpan>{followers.length}</StyledSpan> Followers 
               </p>
               <p onClick={() => changeDisplay('following')}>
-                <span>{following.length}</span> Following
+                <StyledSpan>{following.length}</StyledSpan> Following
               </p>
             </div>
             {
               user.uid == uid ?
                 (editBio ? 
-                  <>
-                    <input type="text" onChange={(e) => setBio(e.target.value)} placeholder={bio} /><CheckIcon onClick={() => toggleEditBio(true)} />
-                  </>
+                  <div>
+                    <input type="text" onChange={(e) => setBio(e.target.value)} placeholder={bio} />
+                    <StyledCheckIcon onClick={() => toggleEditBio(true)} />
+                  </div>
                 :
-                  <p>{bio}<EditIcon onClick={() => toggleEditBio(false)} /></p>)
+                  <p>{bio}<StyledEditIcon onClick={() => toggleEditBio(false)} /></p>)
               :
                 <p>{bio}</p>
             }
@@ -292,8 +330,8 @@ function ProfilePage() {
           null
         }
       </ProfileContainer>
-      <Footer />
-    </>
+      <Footer footerStyle={footerStyle} />
+    </div>
   )
 }
 

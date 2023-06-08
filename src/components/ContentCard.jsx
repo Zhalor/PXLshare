@@ -60,7 +60,7 @@ function ContentCard(props) {
   const [image, setImage] = useState();
   const [likes, setLikes] = useState(props.upload.likes);
   const [profilePicture, setProfilePicture] = useState();
-  const [isLoading, setIsloading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const currentDate = new Date().getTime();
   const dateUploaded = props.upload.dateUploaded.seconds;
   const UploadToCurrentDateDifference = Math.trunc((currentDate/1000/60/60/24) - (dateUploaded/60/60/24));
@@ -85,7 +85,7 @@ function ContentCard(props) {
       const URL = userDoc.data().profilePictureURL;
       const profilePicturePath = await getDownloadURL(ref(storage, URL));
       setProfilePicture(profilePicturePath);
-      setIsloading(false);
+      setIsLoading(false);
     } catch(error) {
       console.log(error);
     }

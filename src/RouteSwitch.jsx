@@ -1,6 +1,6 @@
 import React, { createContext } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import App from './App';
+import Content from './components/Content';
 import ImageUploadPage from "./components/ImageUploadPage"
 import ProfilePage from './components/ProfilePage';
 import LoginPage from './components/LoginPage';
@@ -35,7 +35,7 @@ function RouteSwitch() {
   
   const [firebaseUser, setFirebaseUser] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(true);
-  
+
   useEffect(() => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
@@ -53,7 +53,7 @@ function RouteSwitch() {
     <BrowserRouter>
       <GlobalStyle />
       <Routes>     
-        <Route path='/' element={isLoggedIn ? <App /> : <Navigate to='/login' />} />
+        <Route path='/' element={isLoggedIn ? <Content /> : <Navigate to='/login' />} />
         <Route path='/upload' element={<ImageUploadPage />} />
         <Route path='/p/:id' element={<ProfilePage />} />
         <Route path='/login' element={<LoginPage />} />

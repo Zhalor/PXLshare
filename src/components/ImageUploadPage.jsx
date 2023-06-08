@@ -10,10 +10,6 @@ import getCroppedImg from '../cropImage';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
 import { useNavigate, useLocation } from 'react-router-dom';
 
-const Test = styled.div`
-  height: 100vh;
-`;
-
 const Container = styled.div`
   width: fit-content;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
@@ -84,6 +80,7 @@ function ImageUploadPage() {
 
   const user = useContext(UserContext);
   const { profilePicture } = useLocation().state;
+  const [footerStyle, setFooterStyle] = useState({});
   const [crop, setCrop] = useState({x: 0, y: 0});
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null)
@@ -104,6 +101,14 @@ function ImageUploadPage() {
       zoomSlider.value = zoom;
     }
   }, [zoom]);
+
+  function onPageLoad() {
+      if(window.innerHeight < document.body.scrollHeight) {
+        setFooterStyle({position: 'sticky'});
+      } else {
+        setFooterStyle({position: 'absolute'});
+      }
+    }
 
   async function handleFileChange() {
     if(file) {
@@ -208,7 +213,7 @@ function ImageUploadPage() {
   }
 
   return (
-    <Test>
+    <div onLoad={onPageLoad}>
       <Header />   
       {stage === 'choose' ? 
         <Container>
@@ -251,8 +256,8 @@ function ImageUploadPage() {
         :
         null
         }
-      <Footer />
-    </Test>
+      <Footer footerStyle={footerStyle} />
+    </div>
   )
 }
 
