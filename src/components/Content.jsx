@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import ContentCard from './ContentCard';
 import Header from './Header';
 import Footer from './Footer';
-import { db, collection, getDocs } from '../firebase';
+import { db, collection, getDocs, getFirebaseUserDoc } from '../firebase';
 import { useEffect, useContext, useState } from 'react';
 import { UserContext } from '../RouteSwitch';
-import { useFollowing } from '../hooks/useFollowing';
+import LoadingCard from './LoadingCard';
 
 const ContentContainer = styled.div`
   width: 500px;
@@ -16,21 +16,36 @@ function Content() {
 
   const user = useContext(UserContext);
   const [footerStyle, setFooterStyle] = useState({});
-  const [following] = useFollowing(user.uid);
+  const [cardDisplay, setCardDisplay] = useState({});
+  const [following, setFollowing] = useState([]);
   const [folowingImages, setFollowingImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-    function onPageLoad() {
-      if(window.innerHeight < document.body.scrollHeight) {
-        setFooterStyle({position: 'sticky'});
-      } else {
-        setFooterStyle({position: 'absolute'});
+  function onPageLoad() {
+    setCardDisplay({display: 'flex'});
+    if(window.innerHeight < document.body.scrollHeight) {
+      setFooterStyle({position: 'sticky'});
+    } else {
+      setFooterStyle({position: 'absolute'});
+    }
+    setIsLoading(false);
+  }
+
+  useEffect(() => { 
+    async function getFollowing() {
+      try {
+        const userDoc = await getFirebaseUserDoc(user.uid);
+        setFollowing(userDoc.following);
+      } catch (error) {
+        return error;
       }
     }
+    
+    getFollowing();
+  }, [user]);
 
   useEffect(() => {
-    if(following) {
-      getFollowingImages();
-    }
+    getFollowingImages();
   }, [following]);
 
   async function getFollowingImages() {
@@ -50,8 +65,11 @@ function Content() {
       <Header />
       <ContentContainer onLoad={onPageLoad}>
         {
+          isLoading && <LoadingCard />
+        }
+        {
           folowingImages.map(upload => {
-            return <ContentCard upload={upload} />
+            return <ContentCard upload={upload} cardDisplay={cardDisplay} />
           })
         }
       </ContentContainer>

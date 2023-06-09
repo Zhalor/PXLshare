@@ -12,13 +12,13 @@ import { ReactComponent as EditIcon } from '../icons/EditIcon.svg'
 import { ReactComponent as CheckIcon } from '../icons/CheckIcon.svg'
 import { ReactComponent as EditProfPicIcon } from '../icons/EditProfPicIcon.svg'
 import { Link } from 'react-router-dom';
+import LoadingProfile from './LoadingProfile';
 
 const GlobalStyle = createGlobalStyle`
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, Helvetica, sans-serif;
   }
 
   body {
@@ -31,7 +31,7 @@ const ProfileContainer = styled.div`
 `;
 
 const AccountInfoContainer = styled.div`
-  display: flex;
+  display: none;
   gap: 150px;
   padding: 0px 20px;
   max-width: 500px;
@@ -148,11 +148,13 @@ function ProfilePage() {
   const [currentUserFollowing, setCurrentUserFollowing] = useState([])
   const [display, setDisplay] = useState('gallery');
   const [editBio, setEditBio] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [accountInfoDisplay, setAccountInfoDisplay] = useState({});
 
   useEffect(() => {
     async function getCurrentUserFollowing() {
-      const data = await getFirebaseUserDoc(user.uid);
-      setCurrentUserFollowing(data.following);
+      const userDoc = await getFirebaseUserDoc(user.uid);
+      setCurrentUserFollowing(userDoc.following);
     }
 
     getCurrentUserFollowing();
@@ -164,12 +166,13 @@ function ProfilePage() {
   }, [uid]);
 
   function onPageLoad() {
-    console.log('done')
+    setAccountInfoDisplay({display: 'flex'})
     if(window.innerHeight < document.body.scrollHeight) {
       setFooterStyle({position: 'sticky'});
     } else {
       setFooterStyle({position: 'absolute'});
     }
+    setIsLoading(false);
   }
 
   async function getProfileInfo() {
@@ -268,7 +271,10 @@ function ProfilePage() {
       <GlobalStyle />
       <Header />
       <ProfileContainer>
-        <AccountInfoContainer>
+        {
+          isLoading && <LoadingProfile />
+        }
+        <AccountInfoContainer style={accountInfoDisplay}>
           <ProfPicContainer>
             <ProfilePicture src={profilePicture} />
             <Link to={'/upload'} state={{profilePicture: true}}>

@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { getAuth, signInWithEmailAndPassword } from '../firebase';
+import { getAuth, signInWithEmailAndPassword, getFirebaseUserDoc } from '../firebase';
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Logo from './Logo';
@@ -92,12 +92,13 @@ function LoginPage() {
   let navigate = useNavigate();
   const [isValid, setIsValid] = useState(true);
 
-  async function login(e, justLooking, guestEmail, guestpassword) {
+  async function login(e, justLooking) {
     e.preventDefault();
     const auth = getAuth();
     if(justLooking) {
       try {
-        await signInWithEmailAndPassword(auth, guestEmail, guestpassword);
+        const userDoc = await getFirebaseUserDoc('GuestAccount');
+        await signInWithEmailAndPassword(auth, userDoc.email, userDoc.password);
         navigate('/');
       } catch(e) {
         console.log(e);
@@ -132,7 +133,7 @@ function LoginPage() {
         </FormContainer>
         <SignUpText>Don't have an account? <StyledLink to={'/sign-up'}>Sign Up</StyledLink></SignUpText>
         <p>Wanna look around?</p>
-        <GuestButton onClick={(e) => login(e, true, 'guestaccount@gmail.com', '123456')}>Login as Guest</GuestButton>
+        <GuestButton onClick={(e) => login(e, true)}>Login as Guest</GuestButton>
       </LoginContainer>
     </Container>
     

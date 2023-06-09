@@ -18,14 +18,9 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 
 async function getFirebaseUserDoc(uid) {
-  const q = query(collection(db, 'users'), where('uid', '==', uid));
-  const users = await getDocs(q);
-  const arr = [];
-  users.docs.forEach(user => {
-    const obj = user.data();
-    arr.push(obj)
-  });
-  return arr[0];
+  const data = await getDoc(doc(db, 'users', uid));
+  const userDoc = data.data();
+  return userDoc;
 }
 
 async function getFollowers(uid) {

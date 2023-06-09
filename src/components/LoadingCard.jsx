@@ -1,7 +1,22 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import { ReactComponent as LikeIcon } from '../icons/Like.svg';
 import { ReactComponent as CommentIcon } from '../icons/CommentIcon.svg';
 import CommentSection from "./CommentSection";
+
+const pulse = keyframes`
+  0% {
+    background-color: rgb(170, 170, 170);
+  }
+
+  50% {
+    background-color: rgb(190, 190, 190);
+  }
+
+  100% {
+    background-color: rgb(170, 170, 170);
+  }
+`;
+
 
 const StyledContentCard = styled.div`
   display: flex;
@@ -30,6 +45,7 @@ const StyledProfilePicture = styled.img`
   height: 48px;
   border-radius: 50%;
   background-color: #b3b3b3;
+    animation: ${pulse} 2s linear infinite;
 `;
 
 const PostImage = styled.img`
@@ -39,6 +55,7 @@ const PostImage = styled.img`
   border-bottom: 1px solid rgba(114, 114, 114, 0.2);
   margin-bottom: 8px;
   background-color: #b3b3b3;
+    animation: ${pulse} 2s linear infinite;
 `;
 
 const LoadingBlock = styled.div`
@@ -46,6 +63,7 @@ const LoadingBlock = styled.div`
   height: 20px;
   background-color: #b3b3b3;
   border-radius: 12px;
+  animation: ${pulse} 2s linear infinite;
 `;
 
 function LoadingCard() {
