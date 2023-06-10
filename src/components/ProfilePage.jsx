@@ -94,10 +94,15 @@ const StyledBtn = styled.button`
   margin-left: 20px;
   padding: 6px 12px;
   font-size: 1rem;
-  background-color: #2370ff;
-  border: 1px solid lightblue;
+  background-color: rgb(0,92,152);
+  border: 1px solid rgb(0, 65, 109);
   border-radius: 6px;
   color: white;
+
+  &:hover {
+    background-color: rgb(0, 107, 179);
+    cursor: pointer;
+  }
 `;
 
 const StyledSpan = styled.span`

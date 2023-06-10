@@ -79,7 +79,12 @@ const GuestButton = styled.button`
   font-weight: bold;
   font-size: .9rem;
   text-align: center;
+
+    &:hover {
+    cursor: pointer;
+  }
 `
+
 const LoginError = styled.span`
   color: red;
   font-size: .8rem;

@@ -50,16 +50,16 @@ function RouteSwitch() {
 
   return (
     <UserContext.Provider value={firebaseUser}>
-    <BrowserRouter>
-      <GlobalStyle />
-      <Routes>     
-        <Route path='/' element={isLoggedIn ? <Content /> : <Navigate to='/login' />} />
-        <Route path='/upload' element={<ImageUploadPage />} />
-        <Route path='/p/:id' element={<ProfilePage />} />
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/sign-up' element={<SignUpPage />} />
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter basename='/PXLshare'>
+        <GlobalStyle />
+        <Routes>     
+          <Route path='/' element={isLoggedIn ? <Content /> : <Navigate to='/login' />} />
+          <Route path='/upload' element={<ImageUploadPage />} />
+          <Route path='/p/:id' element={<ProfilePage />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/sign-up' element={<SignUpPage />} />
+        </Routes>
+      </BrowserRouter>
     </UserContext.Provider>
   )
 }
