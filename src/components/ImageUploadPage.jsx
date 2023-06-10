@@ -249,7 +249,9 @@ function ImageUploadPage() {
             <StyledCroppedImage src={croppedImage} />
             <div>
               <StyledBtn onClick={onClose}>Cancel</StyledBtn>
-              <textarea name="" id="" cols="30" rows="5" placeholder='Enter a caption...' onChange={(e) => setDesc(e.target.value)}></textarea>
+              {
+                profilePicture || <textarea name="" id="" cols="30" rows="5" placeholder='Enter a caption...' onChange={(e) => setDesc(e.target.value)}></textarea>
+              }
               <StyledBtn type='button' onClick={uploadFile}>Upload</StyledBtn>
             </div>
           </Container>

@@ -14,17 +14,6 @@ import { ReactComponent as EditProfPicIcon } from '../icons/EditProfPicIcon.svg'
 import { Link } from 'react-router-dom';
 import LoadingProfile from './LoadingProfile';
 
-const GlobalStyle = createGlobalStyle`
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
-
-  body {
-    background-color: whitesmoke;
-  }
-`
 const ProfileContainer = styled.div`
   margin: 30px auto;
   max-width: 960px;
@@ -102,6 +91,7 @@ const StyledCheckIcon = styled(CheckIcon)`
 `;
 
 const StyledBtn = styled.button`
+  margin-left: 20px;
   padding: 6px 12px;
   font-size: 1rem;
   background-color: #2370ff;
@@ -160,19 +150,20 @@ function ProfilePage() {
     getCurrentUserFollowing();
   }, []);
 
-  useEffect(() => {   
-    getProfileInfo();
+  useEffect(() => {
+    setAccountInfoDisplay({display: 'none'});
+    setImages([]);
+    setIsLoading(true);
     setDisplay('gallery');
+    getProfileInfo();
   }, [uid]);
 
   function onPageLoad() {
-    setAccountInfoDisplay({display: 'flex'})
     if(window.innerHeight < document.body.scrollHeight) {
       setFooterStyle({position: 'sticky'});
     } else {
       setFooterStyle({position: 'absolute'});
     }
-    setIsLoading(false);
   }
 
   async function getProfileInfo() {
@@ -190,6 +181,8 @@ function ProfilePage() {
       setBio(profileInfo.bio);
       setImages(uploads);
       setProfilePicture(path);
+      setIsLoading(false);
+      setAccountInfoDisplay({display: 'flex'});
     } catch(error) {
       console.log(error);
     }
@@ -268,7 +261,6 @@ function ProfilePage() {
 
   return (
     <div onLoad={onPageLoad}>
-      <GlobalStyle />
       <Header />
       <ProfileContainer>
         {
