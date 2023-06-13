@@ -20,7 +20,7 @@ const Username = styled.span`
 const DeleteBtn = styled.button`
   margin-left: auto;
   padding: 5px 8px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0);
   border: none;
   color: red;
   font-weight: bold;

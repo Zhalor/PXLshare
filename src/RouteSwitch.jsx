@@ -10,6 +10,7 @@ import { getAuth, onAuthStateChanged } from './firebase';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Lato from './fonts/Lato.ttf';
+import ContentCardLarge from './components/ContentCardLarge';
 
 const GlobalStyle = createGlobalStyle`
 
@@ -58,6 +59,7 @@ function RouteSwitch() {
           <Route path='/p/:id' element={<ProfilePage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/sign-up' element={<SignUpPage />} />
+          <Route path='/post/:id' element={<ContentCardLarge />} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

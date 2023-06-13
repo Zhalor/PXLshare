@@ -3979,10 +3979,15 @@ PERFORMANCE OF THIS SOFTWARE.
   margin-left: 20px;
   padding: 6px 12px;
   font-size: 1rem;
-  background-color: #2370ff;
-  border: 1px solid lightblue;
+  background-color: rgb(0,92,152);
+  border: 1px solid rgb(0, 65, 109);
   border-radius: 6px;
   color: white;
+
+  &:hover {
+    background-color: rgb(0, 107, 179);
+    cursor: pointer;
+  }
 `,td=b.span`
   font-weight: bold;
 `,uU=b.div`
@@ -4064,6 +4069,10 @@ PERFORMANCE OF THIS SOFTWARE.
   font-weight: bold;
   font-size: .9rem;
   text-align: center;
+
+    &:hover {
+    cursor: pointer;
+  }
 `,vU=b.span`
   color: red;
   font-size: .8rem;
@@ -4144,4 +4153,4 @@ PERFORMANCE OF THIS SOFTWARE.
   body {
     background-color: whitesmoke;
   }
-`,Ln=S.createContext();function PU(){const[t,e]=S.useState(!0),[n,r]=S.useState(!0);return S.useEffect(()=>{const i=Qc();uO(i,s=>{s?(e(i.currentUser),r(!0)):r(!1)})},[]),w.jsx(Ln.Provider,{value:t,children:w.jsxs(RT,{children:[w.jsx(AU,{}),w.jsxs(CT,{children:[w.jsx(xi,{path:"/",element:n?w.jsx(sM,{}):w.jsx(_T,{to:"/login"})}),w.jsx(xi,{path:"/upload",element:w.jsx(MM,{})}),w.jsx(xi,{path:"/p/:id",element:w.jsx(cU,{})}),w.jsx(xi,{path:"/login",element:w.jsx(wU,{})}),w.jsx(xi,{path:"/sign-up",element:w.jsx(TU,{})})]})]})})}rd.createRoot(document.getElementById("root")).render(w.jsx(Tt.StrictMode,{children:w.jsx(PU,{})}));
+`,Ln=S.createContext();function PU(){const[t,e]=S.useState(!0),[n,r]=S.useState(!0);return S.useEffect(()=>{const i=Qc();uO(i,s=>{s?(e(i.currentUser),r(!0)):r(!1)})},[]),w.jsx(Ln.Provider,{value:t,children:w.jsxs(RT,{basename:"/PXLshare",children:[w.jsx(AU,{}),w.jsxs(CT,{children:[w.jsx(xi,{path:"/",element:n?w.jsx(sM,{}):w.jsx(_T,{to:"/login"})}),w.jsx(xi,{path:"/upload",element:w.jsx(MM,{})}),w.jsx(xi,{path:"/p/:id",element:w.jsx(cU,{})}),w.jsx(xi,{path:"/login",element:w.jsx(wU,{})}),w.jsx(xi,{path:"/sign-up",element:w.jsx(TU,{})})]})]})})}rd.createRoot(document.getElementById("root")).render(w.jsx(Tt.StrictMode,{children:w.jsx(PU,{})}));

@@ -113,7 +113,9 @@ function ContentCard(props) {
         <StyledProfilePicture src={profilePicture} alt="" />
         <StyledLink to={`/p/${props.upload.username}`} state={{uid: props.upload.uid}}><h2>{props.upload.username}</h2></StyledLink>
       </Container>
-      <PostImage src={image} alt={`Image uploaded by ${props.upload.username}`} />
+      <Link to={`/post/${props.upload.docID}`} state={{upload: props.upload, image: image, profilePicture: profilePicture, likes: likes}}>
+        <PostImage src={image} alt={`Image uploaded by ${props.upload.username}`} />
+      </Link>
       <Container>
         <LikesBtn likes={likes} image={props.upload} toggleLike={toggleLike} />
         <CommentIcon onClick={handleClick} />
@@ -122,7 +124,7 @@ function ContentCard(props) {
       <p>{likes.length} {likes.length == 1 ? 'Like' : 'Likes '}</p>
       <p>Uploaded {UploadToCurrentDateDifference > 0 ? `${UploadToCurrentDateDifference} days ago` : 'today'}</p>
       <CommentSection upload={props.upload} inputRef={inputRef} />
-      </StyledContentCard>
+    </StyledContentCard>
   )
 }
 
