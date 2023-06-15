@@ -1,7 +1,8 @@
 import styled, { keyframes } from "styled-components";
 import { ReactComponent as LikeIcon } from '../icons/Like.svg';
 import { ReactComponent as CommentIcon } from '../icons/CommentIcon.svg';
-import CommentSection from "./CommentSection";
+import Comments from './Comments';
+import CommentInput from './CommentInput';
 
 const pulse = keyframes`
   0% {
@@ -81,7 +82,8 @@ function LoadingCard() {
       </Container>
       <LoadingBlock />
       <LoadingBlock />
-      <CommentSection />
+      <Comments />
+      <CommentInput />
     </StyledContentCard>
   )
 }
