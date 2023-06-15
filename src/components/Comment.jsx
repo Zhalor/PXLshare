@@ -58,7 +58,12 @@ function Comment(props) {
   return (
     <StyledComment>
       <p><StyledLink to={`/p/${props.comment.username}`} state={{uid: props.comment.uid}}><Username>{props.comment.username}</Username></StyledLink>: {props.comment.comment}</p>
-      <DeleteBtn onClick={deleteComment}>X</DeleteBtn>
+      {
+        user.uid === props.comment.uid ?
+          <DeleteBtn onClick={deleteComment}>X</DeleteBtn>
+        :
+          null
+      }
     </StyledComment>
   )
 }

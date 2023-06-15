@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import GalleryImageContainer from "./GalleryImageContainer";
+import GalleryImage from "./GalleryImage";
 
 const StyledGallery = styled.div`
   display: grid;
@@ -15,7 +15,7 @@ function Gallery(props) {
   return (
     <StyledGallery>
       {props.images.map(image => {
-              return <GalleryImageContainer image={image} toggleLike={props.toggleLike}/>
+              return <GalleryImage image={image} toggleLike={props.toggleLike} profilePicture={props.profilePicture} />
             })}
     </StyledGallery>
   )

@@ -3,7 +3,8 @@ import {ReactComponent as CommentIcon} from '../icons/CommentIcon.svg';
 import { db, doc, updateDoc, arrayRemove, arrayUnion, storage, getDownloadURL, ref, getDoc, serverTimestamp, Timestamp} from '../firebase';
 import { useState, useEffect, useContext, useRef } from 'react';
 import LikesBtn from './LikesBtn';
-import CommentSection from './CommentSection';
+import CommentInput from './CommentInput'; 
+import Comments from './Comments';
 import { UserContext } from '../RouteSwitch';
 import { Link } from 'react-router-dom';
 
@@ -58,6 +59,8 @@ function ContentCard(props) {
   const inputRef = useRef(null)
   const [image, setImage] = useState();
   const [likes, setLikes] = useState(props.upload.likes);
+  const [comment, setComment] = useState('');
+  const [comments, setComments] = useState(props.upload.comments);
   const [profilePicture, setProfilePicture] = useState();
   const currentDate = new Date().getTime();
   const dateUploaded = props.upload.dateUploaded.seconds;
@@ -103,6 +106,24 @@ function ContentCard(props) {
     }
   }
 
+  async function addComment() {
+    if(comment.trim()) {
+      try {
+        await updateDoc(doc(db, 'users', props.upload.uid, 'Uploads', props.upload.docID), {
+          comments: arrayUnion({
+            uid: user.uid,
+            comment: comment,
+            username: user.displayName
+          })
+        });
+        setComments([...comments, {uid: user.uid, comment: comment, username: user.displayName}]);
+        setComment('');
+      } catch(error) {
+        console.log(error);
+      }
+    }
+  }  
+
   function handleClick() {
     inputRef.current.focus();
   }
@@ -113,7 +134,7 @@ function ContentCard(props) {
         <StyledProfilePicture src={profilePicture} alt="" />
         <StyledLink to={`/p/${props.upload.username}`} state={{uid: props.upload.uid}}><h2>{props.upload.username}</h2></StyledLink>
       </Container>
-      <Link to={`/post/${props.upload.docID}`} state={{upload: props.upload, image: image, profilePicture: profilePicture, likes: likes}}>
+      <Link to={`/post/${props.upload.docID}`} state={{upload: props.upload, image: image, profilePicture: profilePicture, postLikes: likes}}>
         <PostImage src={image} alt={`Image uploaded by ${props.upload.username}`} />
       </Link>
       <Container>
@@ -123,7 +144,8 @@ function ContentCard(props) {
       <Caption>{props.upload.desc}</Caption>
       <p>{likes.length} {likes.length == 1 ? 'Like' : 'Likes '}</p>
       <p>Uploaded {UploadToCurrentDateDifference > 0 ? `${UploadToCurrentDateDifference} days ago` : 'today'}</p>
-      <CommentSection upload={props.upload} inputRef={inputRef} />
+      <Comments comments={comments} setComments={setComments} upload={props.upload} commentsViewLimit={2} />
+      <CommentInput inputRef={inputRef} addComment={addComment} setComment={setComment} comment={comment} />
     </StyledContentCard>
   )
 }

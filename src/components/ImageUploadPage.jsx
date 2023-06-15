@@ -89,7 +89,7 @@ function ImageUploadPage() {
   const [localFile, setLocalFile] = useState('');
   const [stage, setStage] = useState('choose');
   const [desc, setDesc] = useState('');
-  let navigate = useNavigate()
+  let navigate = useNavigate();
 
   useEffect(() => {
     handleFileChange();

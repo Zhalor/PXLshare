@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import LikesBtn from './LikesBtn';
+import { Link } from 'react-router-dom';
 
 const ImageContainer = styled.div`
   position: relative;
@@ -39,15 +40,17 @@ function GalleryImageContainer(props) {
   return (
     <ImageContainer>
       <Image src={props.image.path} />
-      <Overlay>
-        <LikesBtn likes={props.image.imageInfo.likes} image={props.image.imageInfo} toggleLike={props.toggleLike} />
-        {
-          props.image.imageInfo.likes ?
-            props.image.imageInfo.likes.length
-          :
-            0
-        }
-      </Overlay>
+      <Link to={`/post/${props.image.imageInfo.docID}`} state={{upload: props.image.imageInfo, image: props.image.path, profilePicture: props.profilePicture, postLikes: props.image.imageInfo.likes}}>
+        <Overlay>
+          <LikesBtn likes={props.image.imageInfo.likes} image={props.image.imageInfo} toggleLike={props.toggleLike} />
+          {
+            props.image.imageInfo.likes ?
+              props.image.imageInfo.likes.length
+            :
+              0
+          }
+        </Overlay>
+      </Link>
     </ImageContainer>
   )
 }

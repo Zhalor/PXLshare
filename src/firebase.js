@@ -56,6 +56,11 @@ async function getUploads(uid) {
   return uploads;
 }
 
+async function deleteUpload(upload) {
+  await deleteDoc(doc(db, 'users', upload.uid, 'Uploads', upload.docID));
+  await deleteObject(ref(storage, upload.url));
+}
+
 export { db, collection, doc, getDocs, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove, storage, ref, uploadBytes, getDownloadURL, deleteObject,
    addDoc, deleteDoc, query, where, serverTimestamp, getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,signOut,
-   onAuthStateChanged, updateProfile, getFirebaseUserDoc, getFollowers, getFollowing, getUploads, Timestamp }
+   onAuthStateChanged, updateProfile, getFirebaseUserDoc, getFollowers, getFollowing, getUploads, Timestamp, deleteUpload }

@@ -322,7 +322,7 @@ function ProfilePage() {
         </AccountInfoContainer>
         {
           display === 'gallery' ?
-            <Gallery images={images} toggleLike={toggleLike}/>
+            <Gallery images={images} toggleLike={toggleLike} profilePicture={profilePicture} />
           :
           display === 'followers' ?
             <FollowersFollowingList users={followers} />

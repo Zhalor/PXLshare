@@ -4,6 +4,7 @@ import styled from "styled-components";
 
 const StyledComments = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: 8px;
 `;
@@ -24,18 +25,30 @@ const CommentBtn = styled.button`
 function Comments(props) {
 
   const [showComments, setShowComments] = useState(false);
+  const [commentsViewLimit] = useState(props.commentsViewLimit);
 
   function handleClick(bool) {
     setShowComments(bool);
   }
 
+  function renderComments() {
+    const comments = [];
+    for(let i = 0; i < commentsViewLimit; i++) {
+      comments.push(<Comment comment={props.comments[i]} comments={props.comments} setComments={props.setComments} upload={props.upload} />);
+    }
+
+    return comments;
+  }
+  
+
   return (
     <StyledComments>
       { 
-        props.comments.length >= 2 && showComments === false ?
+        props.comments.length > commentsViewLimit && showComments === false ?
           <>
-            <Comment comment={props.comments[0]} comments={props.comments} setComments={props.setComments} upload={props.upload} />
-            <Comment comment={props.comments[1]} comments={props.comments} setComments={props.setComments} upload={props.upload} />
+            {
+              renderComments()
+            }
           </>
         :
           props.comments.map(comment => {
@@ -43,7 +56,7 @@ function Comments(props) {
             })
       }
       {
-        props.comments.length > 2 &&
+        props.comments.length > commentsViewLimit &&
           (!showComments ?
             <CommentBtn onClick={() => handleClick(true)}>Show All</CommentBtn>
           :
