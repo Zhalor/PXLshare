@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext } from "react";
 import { db, doc, arrayRemove, updateDoc } from "../firebase";
 import styled from "styled-components";
 import { UserContext } from "../RouteSwitch";

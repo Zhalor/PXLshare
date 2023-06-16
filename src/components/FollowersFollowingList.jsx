@@ -16,7 +16,7 @@ function FollowersFollowingList(props) {
   return (
     <FollowerFollowingList>
       {props.users.map(user => {
-          return <FollowerFollowed user={user} />
+          return <FollowerFollowed user={user} key={user.uid} />
         })}
     </FollowerFollowingList>
   )

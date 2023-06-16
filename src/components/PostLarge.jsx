@@ -12,7 +12,7 @@ import {ReactComponent as CommentIcon} from '../icons/CommentIcon.svg';
 
 const PostContainer = styled.div`
   display: flex;
-  margin: 100px auto 0px auto;
+  margin: 50px auto 0px auto;
   width: 1200px;
   border-radius: 8px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.2);
@@ -95,12 +95,12 @@ const StyledBtn = styled.button`
   }
 `;
 
-function Content() {
+function PostLarge() {
 
   const user = useContext(UserContext);
-  const inputRef = useRef(null)
-  const { upload, image, profilePicture, postLikes } = useLocation().state;
+  const inputRef = useRef(null);
   const navigate = useNavigate();
+  const { upload, image, profilePicture, postLikes } = useLocation().state;
   const [likes, setLikes] = useState(postLikes);
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState(upload.comments);
@@ -182,4 +182,4 @@ function Content() {
   )
 }
 
-export default Content;
+export default PostLarge;

@@ -1,6 +1,6 @@
 import React, { createContext } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Content from './components/Content';
+import Feed from './components/Feed';
 import ImageUploadPage from "./components/ImageUploadPage"
 import ProfilePage from './components/ProfilePage';
 import LoginPage from './components/LoginPage';
@@ -10,7 +10,7 @@ import { getAuth, onAuthStateChanged } from './firebase';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import Lato from './fonts/Lato.ttf';
-import ContentCardLarge from './components/ContentCardLarge';
+import PostLarge from './components/PostLarge';
 
 const GlobalStyle = createGlobalStyle`
 
@@ -54,12 +54,12 @@ function RouteSwitch() {
       <BrowserRouter basename='/PXLshare'>
         <GlobalStyle />
         <Routes>     
-          <Route path='/' element={isLoggedIn ? <Content /> : <Navigate to='/login' />} />
+          <Route path='/' element={isLoggedIn ? <Feed /> : <Navigate to='/login' />} />
           <Route path='/upload' element={<ImageUploadPage />} />
           <Route path='/p/:id' element={<ProfilePage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/sign-up' element={<SignUpPage />} />
-          <Route path='/post/:id' element={<ContentCardLarge />} />
+          <Route path='/post/:id' element={<PostLarge />} />
         </Routes>
       </BrowserRouter>
     </UserContext.Provider>

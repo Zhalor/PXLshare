@@ -53,7 +53,7 @@ const Caption = styled.p`
   font-size: 1.1rem;
 `
 
-function ContentCard(props) {
+function Post(props) {
 
   const user = useContext(UserContext);
   const inputRef = useRef(null)
@@ -150,4 +150,4 @@ function ContentCard(props) {
   )
 }
 
-export default ContentCard;
+export default Post;

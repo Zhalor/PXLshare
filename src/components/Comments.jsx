@@ -52,7 +52,7 @@ function Comments(props) {
           </>
         :
           props.comments.map(comment => {
-              return <Comment comment={comment} comments={props.comments} setComments={props.setComments} upload={props.upload} />
+              return <Comment comment={comment} comments={props.comments} setComments={props.setComments} upload={props.upload} key={comment.comment} />
             })
       }
       {

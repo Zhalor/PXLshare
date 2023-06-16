@@ -1,8 +1,4 @@
 import styled from "styled-components";
-import Comments from "./Comments";
-import { useState, useEffect, useContext } from "react";
-import { UserContext } from "../RouteSwitch";
-import { db, doc, getDoc, updateDoc, arrayUnion } from "../firebase";
 
 const CommentField = styled.div`
   display: flex;
@@ -32,7 +28,7 @@ function CommentInput(props) {
 
   return (
       <CommentField>
-        <StyledCommentInput type="text" placeholder='Add a comment...' onChange={(e) => props.setComment(e.target.value)} value={props.comment} ref={props.inputRef} />
+        <StyledCommentInput type="text" placeholder='Add a comment...' maxLength={50} onChange={(e) => props.setComment(e.target.value)} value={props.comment} ref={props.inputRef} />
         <PostBtn type='button' onClick={props.addComment}>Post</PostBtn>
       </CommentField>
   )

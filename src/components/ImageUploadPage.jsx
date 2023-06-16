@@ -231,7 +231,7 @@ function ImageUploadPage() {
               image={localFile}
               crop={crop}
               zoom={zoom}
-              aspect={4 / 3}
+              aspect={1}
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={onCropComplete} 

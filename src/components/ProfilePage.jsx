@@ -75,6 +75,10 @@ const InfoContainer = styled.div`
   > p:last-of-type {
     display: flex;
     gap: 5px;
+
+    @media(max-width: 700px) {
+      justify-content: center;
+    }
   }
 `;
 

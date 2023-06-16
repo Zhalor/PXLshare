@@ -15,7 +15,7 @@ function Gallery(props) {
   return (
     <StyledGallery>
       {props.images.map(image => {
-              return <GalleryImage image={image} toggleLike={props.toggleLike} profilePicture={props.profilePicture} />
+              return <GalleryImage image={image} toggleLike={props.toggleLike} profilePicture={props.profilePicture} key={image.imageInfo.docID} />
             })}
     </StyledGallery>
   )

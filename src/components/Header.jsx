@@ -31,8 +31,14 @@ const HeaderContent = styled.div`
   max-width: 1200px;
   padding: 0px 80px;
 
-  @media (max-width: 1000px) {
+  @media(max-width: 1000px) {
     padding: 0px;
+  }
+
+  @media(max-width: 600px) {
+    > * {
+      width: 180px;
+    }
   }
 `;
 
@@ -57,6 +63,10 @@ const LinksContainer = styled.nav`
   display: flex;
   align-items: center;
   gap: 20px;
+
+  @media(max-width: 600px) {
+    justify-content: center;
+  }
 `
 
 const StyledLink = styled(Link)`
@@ -127,7 +137,7 @@ async function handleChange(search) {
               <StyledUserList>
               {
                 userList.map(user => {
-                  return <StyledSearchLink to={`/p/${user.username}`} state={{uid: user.uid, disp: 'gallery'}}>{user.username}</StyledSearchLink>
+                  return <StyledSearchLink to={`/p/${user.username}`} state={{uid: user.uid, disp: 'gallery'}} key={user.uid}>{user.username}</StyledSearchLink>
                 })
               }
             </StyledUserList>

@@ -82,7 +82,6 @@ function LoadingCard() {
       </Container>
       <LoadingBlock />
       <LoadingBlock />
-      <Comments />
       <CommentInput />
     </StyledContentCard>
   )

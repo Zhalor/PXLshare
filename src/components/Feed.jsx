@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import ContentCard from './ContentCard';
+import Post from './Post';
 import Header from './Header';
 import Footer from './Footer';
 import { db, collection, getDocs, getFirebaseUserDoc } from '../firebase';
@@ -12,7 +12,7 @@ const ContentContainer = styled.div`
   margin: 0px auto;
 `;
 
-function Content() {
+function Feed() {
 
   const user = useContext(UserContext);
   const [footerStyle, setFooterStyle] = useState({});
@@ -69,7 +69,7 @@ function Content() {
         }
         {
           folowingImages.map(upload => {
-            return <ContentCard upload={upload} cardDisplay={cardDisplay} />
+            return <Post upload={upload} cardDisplay={cardDisplay} key={upload.docID} />
           })
         }
       </ContentContainer>
@@ -78,4 +78,4 @@ function Content() {
   )
 }
 
-export default Content;
+export default Feed;
