@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { getAuth, createUserWithEmailAndPassword, updateProfile, db, doc, setDoc, updateDoc, arrayUnion } from '../firebase';
+import { getAuth, createUserWithEmailAndPassword, updateProfile, db, doc, setDoc, updateDoc, arrayUnion, getDoc } from '../firebase';
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Logo from './Logo';
 
 const Container = styled.div`
@@ -78,11 +78,32 @@ const PasswordError = styled.span`
   font-weight: bold;
 `;
 
+const LoginError = styled(PasswordError)`
+  text-align: center;
+`;
+
+
 function SignUpPage() {
 
   let navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [userList, setUserList] = useState([]);
+  const [isValid, setIsValid] = useState(true);
+
+  useEffect(() => {
+    async function getUserList() {
+      const data = await getDoc(doc(db, 'users', 'userList'));
+      const users = data.data().users;
+      const arr = [];
+      for(let user of users) {
+        arr.push(user.username.toLowerCase());
+      }
+      setUserList(arr);
+    }
+
+    getUserList();
+  }, []);
 
   function checkValidity(e) {
     if(e.validity.patternMismatch) {
@@ -100,7 +121,14 @@ function SignUpPage() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm-password').value;
-    if(password === confirmPassword) {
+    
+    if(userList.includes(username.toLowerCase())) {
+      setIsValid(false);
+    } else {
+      setIsValid(true);
+    }
+    
+    if(password === confirmPassword && isValid === true) {
       try {
         const auth = getAuth();
     
@@ -135,6 +163,12 @@ function SignUpPage() {
       <LoginContainer>
         <FormContainer onSubmit={(e) => createAccount(e)}>
           <Logo>PXLshare</Logo>
+          {
+            !isValid ? 
+              <LoginError>Username taken</LoginError>
+            :
+              null
+          }
           <StyledInput onInput={(e) => checkValidity(e.target)} type="text" placeholder='Username' id='username' pattern='^[\w]+$' maxLength={16} required />
           <StyledInput type="email" placeholder='Email Address' id='email' required />
           {

@@ -5,7 +5,6 @@ import { UserContext } from '../RouteSwitch';
 import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
 import  { ReactComponent as HomeIcon } from '../icons/HomeIcon.svg'
 import  { ReactComponent as AccountIcon } from '../icons/AccountIcon.svg'
-import { useEffect } from 'react';
 
 const StyledFooter = styled.div`
   position: absolute;

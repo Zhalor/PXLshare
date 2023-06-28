@@ -18,10 +18,11 @@ function Feed() {
   const [footerStyle, setFooterStyle] = useState({});
   const [cardDisplay, setCardDisplay] = useState({});
   const [following, setFollowing] = useState([]);
-  const [folowingImages, setFollowingImages] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [followingImages, setFollowingImages] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   function onPageLoad() {
+    console.log('hi')
     setCardDisplay({display: 'flex'});
     if(window.innerHeight < document.body.scrollHeight) {
       setFooterStyle({position: 'sticky'});
@@ -45,6 +46,9 @@ function Feed() {
   }, [user]);
 
   useEffect(() => {
+    if(following.length > 0) {
+      setIsLoading(true);
+    }
     getFollowingImages();
   }, [following]);
 
@@ -68,7 +72,7 @@ function Feed() {
           isLoading && <LoadingCard />
         }
         {
-          folowingImages.map(upload => {
+          followingImages.map(upload => {
             return <Post upload={upload} cardDisplay={cardDisplay} key={upload.docID} />
           })
         }
