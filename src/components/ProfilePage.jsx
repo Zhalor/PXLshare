@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { createGlobalStyle } from 'styled-components';
 import { db, doc, getDoc, storage, ref, getDownloadURL, updateDoc, arrayUnion, arrayRemove, getFirebaseUserDoc, getFollowers, getFollowing, getUploads} from '../firebase';
 import Header from './Header';
 import Footer from './Footer';
@@ -56,14 +55,11 @@ const InfoContainer = styled.div`
   > div {
     display: flex;
     align-items: center;
-    gap: 8px;
-
-    > p {
-      width: 100px;
-    }
+    gap: 45px;
 
     @media(max-width: 700px) {
       flex-direction: column;
+      text-align: center;
       gap: 5px;
     }
   }
@@ -81,6 +77,14 @@ const InfoContainer = styled.div`
     }
   }
 `;
+
+const StyledParagraph = styled.p`
+  white-space: nowrap;
+
+  &:hover {
+    cursor: pointer;
+  }
+`
 
 const StyledEditIcon = styled(EditIcon)`
   &:hover {
@@ -139,7 +143,7 @@ function ProfilePage() {
   const { uid } = useLocation().state;
   const [footerStyle, setFooterStyle] = useState({});
   const [username, setUsername] = useState('');
-  const [profilePicture, setProfilePicture] = useState('');
+  const [profPicture, setProfilePicture] = useState('');
   const [bio, setBio] = useState('');
   const [images, setImages] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -182,14 +186,14 @@ function ProfilePage() {
       const userFollowers = await getFollowers(uid);
       const userFollowing = await getFollowing(uid);
       const uploads = await getUploads(uid)
-      const path = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));
+      const profilePicturePath = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));
 
       setFollowers(userFollowers);
       setFollowing(userFollowing);
       setUsername(profileInfo.username);
       setBio(profileInfo.bio);
       setImages(uploads);
-      setProfilePicture(path);
+      setProfilePicture(profilePicturePath);
       setIsLoading(false);
       setAccountInfoDisplay({display: 'flex'});
     } catch(error) {
@@ -277,7 +281,7 @@ function ProfilePage() {
         }
         <AccountInfoContainer style={accountInfoDisplay}>
           <ProfPicContainer>
-            <ProfilePicture src={profilePicture} />
+            <ProfilePicture src={profPicture} />
             <Link to={'/upload'} state={{profilePicture: true}}>
             <Overlay>
               <EditProfPicIcon />
@@ -299,15 +303,15 @@ function ProfilePage() {
               }
             </div>
             <div>
-              <p onClick={() => changeDisplay('gallery')}>
+              <StyledParagraph onClick={() => changeDisplay('gallery')}>
                 <StyledSpan>{images.length}</StyledSpan> Photos
-              </p>
-              <p onClick={() => changeDisplay('followers')}>
+              </StyledParagraph>
+              <StyledParagraph onClick={() => changeDisplay('followers')}>
                 <StyledSpan>{followers.length}</StyledSpan> Followers 
-              </p>
-              <p onClick={() => changeDisplay('following')}>
+              </StyledParagraph>
+              <StyledParagraph onClick={() => changeDisplay('following')}>
                 <StyledSpan>{following.length}</StyledSpan> Following
-              </p>
+              </StyledParagraph>
             </div>
             {
               user.uid == uid ?
@@ -326,7 +330,7 @@ function ProfilePage() {
         </AccountInfoContainer>
         {
           display === 'gallery' ?
-            <Gallery images={images} toggleLike={toggleLike} profilePicture={profilePicture} />
+            <Gallery images={images} toggleLike={toggleLike} profilePicture={profPicture} />
           :
           display === 'followers' ?
             <FollowersFollowingList users={followers} />

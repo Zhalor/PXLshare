@@ -9,6 +9,12 @@ const StyledCommentInput = styled.input`
   border: none;
   padding: 20px;
   flex: 1;
+  outline: none;
+  border: 1px solid white;
+  
+  &:focus {
+    border-color:rgb(206, 206, 206)
+  }
 `;
 
 const PostBtn = styled.button`

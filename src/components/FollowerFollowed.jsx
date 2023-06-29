@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import { getFirebaseUserDoc, getDownloadURL, ref, storage } from "../firebase";
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const Container = styled.div`

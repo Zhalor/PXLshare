@@ -22,7 +22,6 @@ function Feed() {
   const [isLoading, setIsLoading] = useState(false);
 
   function onPageLoad() {
-    console.log('hi')
     setCardDisplay({display: 'flex'});
     if(window.innerHeight < document.body.scrollHeight) {
       setFooterStyle({position: 'sticky'});
@@ -60,8 +59,8 @@ function Feed() {
         arr.push(upload.data());
       });
     }
-    const sortedByNewest = arr.toSorted((first, second) => second.dateUploaded.seconds - first.dateUploaded.seconds);
-    setFollowingImages(sortedByNewest);
+    arr.sort((first, second) => second.dateUploaded.seconds - first.dateUploaded.seconds);
+    setFollowingImages(arr);
   }
 
   return (

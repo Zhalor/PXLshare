@@ -1,12 +1,11 @@
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { useState, useContext } from 'react';
-import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg'
-import  { ReactComponent as HomeIcon } from '../icons/HomeIcon.svg'
-import  { ReactComponent as AccountIcon } from '../icons/AccountIcon.svg'
+import { useState, useEffect, useContext } from 'react';
+import  { ReactComponent as UploadIcon } from '../icons/UploadIcon.svg';
+import  { ReactComponent as HomeIcon } from '../icons/HomeIcon.svg';
 import LogoutIcon from '../icons/LogoutIcon';
 import { UserContext } from '../RouteSwitch';
-import { db, getDoc, doc} from '../firebase';
+import { db, getDoc, doc, storage, ref, getDownloadURL} from '../firebase';
 import Logo from './Logo';
 
 const HeaderContainer = styled.header`
@@ -18,10 +17,6 @@ const HeaderContainer = styled.header`
   margin-bottom: 20px;
   border-bottom: 1px solid rgba(114, 114, 114, 0.2);
   z-index: 1;
-
-  @media (max-width: 700px) {
-    padding: 20px 5px;
-  }
 `;
 
 const HeaderContent = styled.div`
@@ -31,14 +26,19 @@ const HeaderContent = styled.div`
   max-width: 1200px;
   padding: 0px 80px;
 
+  > a, div, nav {
+    width: 205px;
+  }
+
   @media(max-width: 1000px) {
     padding: 0px;
   }
 
-  @media(max-width: 600px) {
-    > * {
-      width: 180px;
-    }
+  @media(max-width: 700px) {
+    
+    > a, div, nav {
+    width: auto;
+  }
   }
 `;
 
@@ -63,15 +63,17 @@ const LinksContainer = styled.nav`
   display: flex;
   align-items: center;
   gap: 20px;
-
-  @media(max-width: 600px) {
-    justify-content: center;
-  }
 `
 
 const StyledLink = styled(Link)`
   color: black;
   text-decoration: none;
+`;
+
+const StyledProfilePicture = styled.img`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
 `;
 
 const StyledUserList = styled.div`
@@ -106,29 +108,46 @@ function Header() {
   const user = useContext(UserContext);
   const [width, setWidth] = useState(window.innerWidth);
   const [userList, setUserList] = useState([]);
+  const [profPicture, setProfilePicture] = useState('');
 
   window.addEventListener('resize', () => {
-    const currentWidth = window.innerWidth;
-    setWidth(currentWidth);
+    setWidth(window.innerWidth);
   });
 
-async function handleChange(search) {
-  if(search.trim()) {
-    const data = await getDoc(doc(db, 'users', 'userList'));
-    const users = data.data().users;
-    const reg = new RegExp(`^${search}\w*`, 'ig');
-    const searchList = users.filter(user => user.username.match(reg));
-    setUserList(searchList);
-  } else {
-    setUserList([]);
+  useEffect(() => {
+    getProfilePicture();
+  }, []);
+
+  async function handleChange(search) {
+    if(search.trim()) {
+      const data = await getDoc(doc(db, 'users', 'userList'));
+      const users = data.data().users;
+      const reg = new RegExp(`^${search}\w*`, 'ig');
+      const searchList = users.filter(user => user.username.match(reg));
+      setUserList(searchList);
+    } else {
+      setUserList([]);
+    }
   }
-}
+
+  async function getProfilePicture() {
+    console.log(user.uid)
+    const data = await getDoc(doc(db, 'users', user.uid));
+    const profileInfo = data.data();
+    const profPicturePath = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));
+    setProfilePicture(profPicturePath);
+  }
 
   return (
     <HeaderContainer>
       <HeaderContent>
         <StyledLink to='/'>
-          <Logo>PXLshare</Logo>
+          {
+            width > 700 ?
+              <Logo>PXLshare</Logo>
+            :
+              <Logo>PXL</Logo>
+          }
         </StyledLink>
         <SearchBar>
           <StyledInput type="text" onChange={(e) => handleChange(e.target.value)} maxLength={16} placeholder='Search for users...' />
@@ -140,36 +159,39 @@ async function handleChange(search) {
                   return <StyledSearchLink to={`/p/${user.username}`} state={{uid: user.uid, disp: 'gallery'}} key={user.uid}>{user.username}</StyledSearchLink>
                 })
               }
-            </StyledUserList>
-          :
-            null
+              </StyledUserList>
+            :
+              null
           }
-          
         </SearchBar>
         <LinksContainer>
-
-          {width > 600 ? 
-            <Link to={'/upload'} state={{profilePicture: false}}>
-              <UploadIcon />
-            </Link> : 
-            null}
-
-          {width > 600 ? 
-            <Link to={'/'}>
-              <HomeIcon />
-            </Link> : 
-            null}
-
-          <Link to={'/login'}>
-            <LogoutIcon />
+          {
+            width > 700 ? 
+              <Link to={'/upload'} state={{profilePicture: false}}>
+                <UploadIcon />
+              </Link>
+            : 
+              null
+          }
+          {
+            width > 700 ? 
+              <Link to={'/'}>
+                <HomeIcon />
+              </Link>
+            : 
+              null
+          }
+          {
+            width > 700 ?
+              <Link to={'/login'}>
+                <LogoutIcon />
+              </Link>
+            :
+              null
+          }
+          <Link to={`/p/${user.displayName}`} state={{uid: user.uid, disp: 'gallery'}}>
+            <StyledProfilePicture src={profPicture} />
           </Link>
-
-          {width > 600 ? 
-            <Link to={`/p/${user.displayName}`} state={{uid: user.uid, disp: 'gallery'}}>
-              <AccountIcon />
-            </Link> : 
-            null}
-          
         </LinksContainer>
       </HeaderContent>
     </HeaderContainer>
