@@ -18,12 +18,6 @@ const StyledFooter = styled.div`
   background-color: white;
 `;
 
-const StyledProfilePicture = styled.img`
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-`;
-
 function Footer(props) {
 
   const user = useContext(UserContext);
@@ -39,7 +33,6 @@ function Footer(props) {
   });
 
   async function getProfilePicture() {
-    console.log(user.uid)
     const data = await getDoc(doc(db, 'users', user.uid));
     const profileInfo = data.data();
     const profPicturePath = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));

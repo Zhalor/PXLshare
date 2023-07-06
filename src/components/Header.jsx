@@ -22,6 +22,7 @@ const HeaderContainer = styled.header`
 const HeaderContent = styled.div`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin: 0 auto;
   max-width: 1200px;
   padding: 0px 80px;
@@ -45,7 +46,6 @@ const HeaderContent = styled.div`
 const SearchBar = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
   position: relative;
 `;
 
@@ -131,7 +131,6 @@ function Header() {
   }
 
   async function getProfilePicture() {
-    console.log(user.uid)
     const data = await getDoc(doc(db, 'users', user.uid));
     const profileInfo = data.data();
     const profPicturePath = await getDownloadURL(ref(storage, profileInfo.profilePictureURL));

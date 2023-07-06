@@ -9,6 +9,7 @@ const Logo = styled.h1`
   font-family: 'Titan';
   text-align: center;
   font-weight: 400;
+  font-size: 2.5rem;
 `;
 
 export default Logo;
